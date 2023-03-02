@@ -1,0 +1,14 @@
+[
+    ["Deep Learning Специалист", ["ml", "искусственный интеллект", "speech synthesis", "deep learning", "machine learning", "artificial intelligence", "машинное обучение", "voice to lip synch", "ai"], 0], 
+    ["программист .NET",["c#", "asp.net core", "asp.net mvc", "javascript", "html 5", "css 3", "bootstrap", "jquery", "orm", "sql"],0],
+    ["программист abap", ["sap abap", "документирование", "sap hana", "sap fiori"], 0], 
+    ["программист C", ["c", "c++", "ассемблер", "английский язык", "отладчик gdb", "ida pro", "ghidra", "криптография"], 0], 
+    ["инженер-программист асу тп", ["проектирование асу-тп", "разработка ии", "робототехника", "c", "c++", "python", "sql", "английский язык", "ооп", "поп", "сети"], 0],
+    ["фронтенд разработчик", ["java", "js", "php", "html"], 0], 
+    ["бэкэнд разработчик", ["java", "python", "git", "sql", "ооп", "web"], 0], 
+    ["js разработчик jun", ["python3", "falcon", "sqla", "es6", "w2ui"], 0], 
+    ["фул стек разработчик", ["php", "irawel"], 0], 
+    ["Разработчик C#", ["c#", "wealth-lab", "трейдинг"], 0], 
+    ["Стажёр SEO аналитик", ["seo оптимизация", "внешняя оптимизация сайта", "внутренняя оптимизация сайта", "seo"], 0], 
+    ["Unity разработчик", ["unity", "android", "android studio", "unity 2d"], 0]
+    ]
