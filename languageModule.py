@@ -1,21 +1,24 @@
 def translator (users_text):
-    start = '/startrungoстартпускпоехалиначалиничинайначнемначнём'
-    stop = '/stopстопостановитьхватитпрекратиуйтивыходвыйтизакончитьдостаточносохранитьвсёexitquit'
+    start = '/startrungoстартпускпоехалиначалиничинайначнемначнёмпривет)))привет!'
+    stop = '/stopстопостановитьхватитпрекратиуйтивыходвыйтизакончитьдостаточносохранитьвсёвсеexitquit'
     help = '''/helpmanualпомощьпомочьпомогитемануалсправка'''
-    show = 'showviewopenпокажипоказатьпросмотретьпосмотретьвзглянутьоткрытьоткройвсесформируйвыведивывести'
+    show = 'showviewopenпокажипоказатьпросмотретьпосмотретьвзглянутьоткрытьоткройсформируйвыведивывести'
     add = 'добавитьдобавьвнестивнесидополнитьсоздатьсоздай'
     addvac = '/addvacвакансиивакансиювакант' 
     addskill = '/addskillопытумениеуменияпрактикускиллынавыки'  
     rate = '/ratestatisticрейтингстатистикастатистикупроанализируй' 
     delete = '/deleteудалитьснесиснестиуничтожьуничтожитьаннигилироватьаннигилируйубериубрать'
     demo = '/demoдемонстрацияпробныетестовыепримерные'
+    cancel = '/cancelresetотменитьотменазабейотставить'
     
-    
+    for word in str(users_text).lower().split():
+        if word in start:
+            return '/start'
+
     if str(users_text).split()[0].lower() in add:
         if str(users_text).split()[-1].lower() in addvac:
             return '/addvac'
         elif str(users_text).split()[-1].lower() in addskill:
-#            print(str(users_text).split()[-1])
             return '/addskill'
         else:
             return users_text
@@ -24,10 +27,8 @@ def translator (users_text):
         if str(users_text).split()[-1].lower() in addvac:
             return '/allvac'
         elif str(users_text).split()[-1].lower() in addskill:
-#            print(f"{((str(users_text).split()[-1]).upper)}:")
             return '/allskill'
         elif str(users_text).split()[-1].lower() in rate:
-#            print(f"{(str(users_text).split()[-1].upper)}:")
             return '/rate'
         else:
             return users_text
@@ -36,7 +37,6 @@ def translator (users_text):
         if str(users_text).split()[-1].lower() in addvac:
             return '/delvac'
         elif str(users_text).split()[-1].lower() in addskill:
-#            print(f"{((str(users_text).split()[-1]).upper)}:")
             return '/delskill'
         else:
             return users_text
@@ -45,12 +45,12 @@ def translator (users_text):
             
     else:
         for i in range(len(list((users_text).split()))):
-            # print(str(users_text).split()[i].lower())
-            if str(users_text).split()[i].lower() in stop:
+            if str(users_text).split()[i].lower() in cancel:
+                return '/cancel'
+            elif str(users_text).split()[i].lower() in stop:
                 return '/stop'
             else:
                 for i in range(len(list((users_text).split()))):
-                    # print(str(users_text).split()[i].lower())
                     if str(users_text).split()[i].lower() in help:
                         return '/help'
                     else:

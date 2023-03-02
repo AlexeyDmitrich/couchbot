@@ -5,19 +5,27 @@ import functions as func
 import requests
 import languageModule
 import talkingModule
+import time
+import subprocess
 
 try:
     with open ('token.json', 'r', encoding='UTF-8') as tk:
         API_TOKEN = (json.load(tk))
 except:
     print('Не найден токен')
-    new_token = input("Введите новый API-токен")
+    new_token = input("Введите новый API-токен:\n")
+    time.sleep(3)
     try:
         with open ('token.json', 'w', encoding='UTF-8') as tk:
             tk.write(json.dumps(new_token, ensure_ascii=False))
     except:
         print("Не удалось привязать новый токен")
+# try:
 bot = telebot.TeleBot(API_TOKEN)
+# except:
+#     subprocess.Popen(['python','main.py'])
+
+
 API_URL = 'https://7012.deeppavlov.ai/model'
 
 users = [] # нужен какой-то учёт пользователей
@@ -59,9 +67,8 @@ def data_input(message):
     global dialog
     global replic
     global vacancy
-#    print (f'stable vacancy: {vacancy}')
     global need_skill
-#    print (f'need_skill: {need_skill}')
+
     try:
         if dialog == 1:
             if languageModule.translator((message.text).lower()) != '/stop':
@@ -97,6 +104,32 @@ def data_input(message):
                 dialog = 9
                 replic = 'введите название следующей вакансии или скажите стоп, чтобы сохранить'
                 out_say(message, 2)
+
+        elif dialog == -1:
+            if (languageModule.translator((message.text).lower()) != '/stop') and (languageModule.translator((message.text).lower()) != '/cancel'):
+                func.delskill((message.text).lower())
+            else:
+                if languageModule.translator((message.text).lower()) == '/cancel':
+                    bot.send_message(message.chat.id, 'Возвращаю всё как было')
+                    dialog = 0
+                    func.load(user)
+                else:
+                    menu.working(message.from_user.id, '/stop')
+                    bot.send_message(message.chat.id, 'Изменения сохранены')
+                    dialog = 0
+        
+        elif dialog == -2:
+            if (languageModule.translator((message.text).lower()) != '/stop') and (languageModule.translator((message.text).lower()) != '/cancel'):
+                func.delvac((message.text).lower())
+            else:
+                if languageModule.translator((message.text).lower()) == '/cancel':
+                    bot.send_message(message.chat.id, 'Возвращаю всё на место')
+                    dialog = 0
+                    func.load(user)
+                else:
+                    menu.working(message.from_user.id, '/stop')
+                    bot.send_message(message.chat.id, 'Изменения сохранены')
+                    dialog = 0 
 
         else: understand(message)
     except:
@@ -149,8 +182,16 @@ def understand (message):
                 out_say(message, 0)
             
             #для удаления навыков:
-#            elif output == '/delskill':
-                
+            elif output == '/delskill':
+                dialog = 9
+                replic = 'Отправьте названия навыков для их удаления, затем отправьте стоп - для сохранения изменений, или отмена - для сброса\n'
+                out_say(message, -1)
+
+            #для удаления вакансий:
+            elif output == '/delvac':
+                dialog = 9
+                replic = 'Отправьте названия вакансий для их удаления, затем отправьте стоп - для сохранения изменений, или отмена - для сброса\n'
+                out_say(message, -2)
 
             # AI для поддержания диалога
             else:
@@ -200,4 +241,5 @@ def sticker_input(message):
         bot.send_message(message.chat.id, 'Что бы этот стикер значил? \n(пока это риторический вопрос)')
     except:
         error(message)    
+
 bot.polling()

@@ -10,16 +10,9 @@ def working (user, choise=''):
         case '/start':
             return func.load(user)
         case '/stop':
-#           if request.lower() in yes:
             return func.save(user)
-#            print('Не забывайте добавлять новые навыки! \n До новых встреч!')
-#                break
         case '/help':
             return func.print_help()
-#        case '/addvac':
-#            return func.add_vacancy()
-#        case '/addskill':
-#            return func.add_skill()
         case '/allvac':
             return func.allpreview(func.base_of_vacancis)
         case '/allskill':

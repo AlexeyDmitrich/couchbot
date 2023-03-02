@@ -3,8 +3,8 @@ import json as js
 
 base_of_skills = ["нажимание кнопок", "смотрение в монитор", "стремление к развитию"] # список коротких строк
 base_of_vacancis = [["Deep Learning Специалист", ["ml", "искусственный интеллект", "speech synthesis", "deep learning", "machine learning", "artificial intelligence", "машинное обучение", "voice to lip synch", "ai"], 0]]  # список списков/словарь (или т.п.). Уместить: должность - скиллы - уровень соответствия
-# модель вакансии: [название, [навык-1, навык-2, ..., навык-n], рейтинг] рейтинг техническая переменная, которая расчитывается
-# при добавлении вакансии. В случае, если у кандидата есть нужные навыки - бот сообщит ему об этом.
+# модель вакансии: [название, [навык-1, навык-2, ..., навык-n], рейтинг] рейтинг - техническая переменная, которая расчитывается
+
 rate_to_vacancy = {}
 
 def load (user):
@@ -38,13 +38,11 @@ def load (user):
         сохранить сеанс. Если это сделать - то при следующем запуске вакансии и навыки останутся в базе.
                
         Сохранённый сеанс пока отсутствует. Это ничего, сейчас создадим.
-               
                ''')
         save(user)
         load_text_ready = ('Готово! Ботом можно пользоваться.')
-        # load_text_add_skills = ('Давайте для начала выясним, что Вы уже умеете?')
-        # add_skill()
         return(f'{load_text_first}\n\n {load_text_ready}')
+
 def save (user):
     global base_of_skills
     global base_of_vacancis
@@ -77,65 +75,24 @@ def print_help ():
     /stop \t- остановить бота (будет предложено сохранить сеанс)
     /help \t- показать эту страницу помощи
     ''')
-    test_text = "Мы Вам поможем. Потом."
     return man_text
-    
-def add_skill ():
-    global base_of_skills
-    print('''
-    Этот раздел нужен для добавления своего опыта/навыков/знаний/умений, 
-    что там ещё у Вас есть. Очень рекомендую для каждого навыка вызывать 
-    эту команду отдельно. Позвольте дать Вам ещё совет: вводите название 
-    навыка так, как его указывает работодатель в описании вакансии.
-    ''')
-    skill = ' '
-    while skill != '':
-        skill = input('Введите навык и нажмите enter, \nесли новых навыков больше нет, просто нажмите enter \n')
-        if skill != '':
-            base_of_skills.append(skill.lower())
-            print ('Навык добавлен \n')
 
-def add_vacancy (name, skills):
-    global base_of_vacancis
-    # print ('''
-    # Здесь всё не так просто, как с добавлением навыков, но, если выполнять все подсказки
-    # бота - то добавить новую вакансию не составит труда. 
-    # ''')
-    name = name  # input('Для начала введите название вакансии: \n')
-    print(name)
-    skills = skills
-    print(skills)
-    # skill = ' '
-    rate = 0
-    # while skill != '':
-    #     skill = input('''
-    #     Введите одно из требований к кандидату и нажмите Enter. 
-    #     Этот вопрос будет задан снова, если требований больше нет,
-    #     просто нажмите Enter \n''')
-    #     if skill != '':
-    #         skills.append(skill.lower())
-    for skill in skills:
-        if skill in base_of_skills:
-            rate += 1
-    if rate >= len(skills):
-        print('Есть вероятность, что Вы идеально подходите этой работе. Или она Вам.\n')
-    elif rate > len(skills)/2:
-        print('Вы более, чем наполовину обладаете нужными качествами для этой вакансии.\n')
-    elif rate > 0:
-        print('Кое-что из того, чего хочет работодатель Вы умеете.\n')
-    base_of_vacancis.append([name, skills, rate])
-    print('Вакансия добавлена! \n')
-
+# метод для удаления навыков:
+# принимает название навыка
+# удаляет навык из документа base_of_skills    
 def delskill(skill):
     global base_of_skills
     base_of_skills.remove(skill)
     
+# метод для удаления вакансий:
+# принимает название вакансии
+# ищет в списке вакансий те, нулевые значения которых соответствуют названию в запросе
+# удаляет вакансию из документа base_of_vacancis  
 def delvac(vac):
     global base_of_vacancis
     for vacancy in base_of_vacancis:
         if vacancy[0] == vac:
             base_of_vacancis.remove(vacancy)
-            
 
 def allpreview (base):
     global base_of_vacancis
@@ -168,14 +125,8 @@ def rate ():
         rate_to_vacancy [rate].append(vacancy)
 
     rate_head = ('Рейтинг компетенций пересчитан.\n')
-    #print (rate_to_vacancy)
     res = ''
     for key, value in rate_to_vacancy.items():
         for i in range(len(value)):
-            # print(value[i][0])
-            # print(key)
             res += (f"Вакансия: {value[i][0]} \t\t Рейтинг: {key}/{len(value[i][1])} \n")
     return(f'{rate_head} \n{res}')
-    
-    # for key in rate_to_vacancy:
-    #     print(f"Вакансия: {rate_to_vacancy[key]} \t Рейтинг: {key}/{len(rate_to_vacancy[key][1])} ")
