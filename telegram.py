@@ -6,7 +6,7 @@ import requests
 import languageModule
 import talkingModule
 import time
-import subprocess
+
 
 try:
     with open ('token.json', 'r', encoding='UTF-8') as tk:
@@ -14,17 +14,19 @@ try:
 except:
     print('Не найден токен')
     new_token = input("Введите новый API-токен:\n")
-    time.sleep(3)
     try:
         with open ('token.json', 'w', encoding='UTF-8') as tk:
             tk.write(json.dumps(new_token, ensure_ascii=False))
+        time.sleep(3)
+        with open ('token.json', 'r', encoding='UTF-8') as tk:
+            API_TOKEN = (json.load(tk))
     except:
         print("Не удалось привязать новый токен")
-# try:
-bot = telebot.TeleBot(API_TOKEN)
-# except:
-#     subprocess.Popen(['python','main.py'])
-
+try:
+    bot = telebot.TeleBot(API_TOKEN)
+    print('Бот настроен')
+except:
+    print('Запуск бота не удался. Попробуйте перезапустить программу.')
 
 API_URL = 'https://7012.deeppavlov.ai/model'
 
