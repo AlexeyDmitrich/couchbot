@@ -193,6 +193,8 @@ def understand (message):
                 replic = 'Отправьте названия вакансий для их удаления, затем отправьте стоп - для сохранения изменений, или отмена - для сброса\n'
                 out_say(message, -2)
 
+            
+
             # AI для поддержания диалога
             else:
     #            bot.send_message(message.chat.id, output)

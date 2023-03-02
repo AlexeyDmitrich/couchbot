@@ -94,6 +94,7 @@ def delvac(vac):
         if vacancy[0] == vac:
             base_of_vacancis.remove(vacancy)
 
+# просмотр всех вакансий
 def allpreview (base):
     global base_of_vacancis
     res = ''
@@ -107,6 +108,7 @@ def allpreview (base):
             res += '\n'
     return res
     
+# просмотр статистики    
 def rate ():
     global base_of_vacancis
     global rate_to_vacancy
@@ -130,3 +132,19 @@ def rate ():
         for i in range(len(value)):
             res += (f"Вакансия: {value[i][0]} \t\t Рейтинг: {key}/{len(value[i][1])} \n")
     return(f'{rate_head} \n{res}')
+
+# чек вакансии
+def check_vac (vacancy):
+    check = '''
+    '''
+    for vac in base_of_vacancis:
+        if vac[0] == vacancy:
+            check+= (f'Вакансия: {(vac[0])}\nИмеющиеся навыки:\n')
+            for skill in vac[1]:
+                if skill in base_of_skills:
+                    check += (f'{skill}')
+            check+= (f'Недостающие навыки:\n')
+            for skill in vac[1]:
+                if skill not in base_of_skills:
+                    check += (f'{skill}')
+    return check
