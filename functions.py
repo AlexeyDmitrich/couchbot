@@ -140,11 +140,53 @@ def check_vac (vacancy):
     for vac in base_of_vacancis:
         if vac[0] == vacancy:
             check+= (f'Вакансия: {(vac[0])}\nИмеющиеся навыки:\n')
+            count_of_skills = len(vac[0])
+            rate_counter = 0
             for skill in vac[1]:
                 if skill in base_of_skills:
-                    check += (f'{skill}')
+                    check += (f' + {skill}\n')
+                    rate_couner += 1
+            if rate_counter == 0: check += (" -- нет --")
             check+= (f'Недостающие навыки:\n')
             for skill in vac[1]:
                 if skill not in base_of_skills:
-                    check += (f'{skill}')
+                    check += (f' - {skill}\n')
+            percent = (rate_counter/count_of_skills)*100
+            check += (f'\n Вы на {percent}% подготовлены к этой работе')
+            
     return check
+
+def find_me_job ():
+    propose = '''
+    '''
+    for vac in base_of_vacancis:
+        count_of_skills = len(vac[0])
+        rate_counter = 0
+        for skill in vac[1]:
+            if skill in base_of_skills:
+                rate_couner += 1
+        percent = (rate_counter/count_of_skills)*100
+        vac[2] = percent
+
+    lead1 = []
+    highest_per1 = base_of_vacancis[0][2]
+    lead2 = []
+    highest_per2 = 0
+    lead3 = []
+    highest_per3 = 0
+    for vac in base_of_vacancis:
+        if vac[2] > highest_per1:
+            lead1 = vac
+        elif vac[2] > highest_per2:
+            lead2 = vac
+        elif vac[2] > highest_per3:
+            lead3 = vac
+
+    propose += (f'''
+    На данном этапе Вам больше всего стоит присмотреться к следующим вакансиям: 
+    \n{check_vac(lead1)}
+    \n\n{check_vac(lead2)}
+    \n\n{check_vac(lead3)}
+    ''')
+
+    return propose

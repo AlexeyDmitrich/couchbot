@@ -107,6 +107,11 @@ def data_input(message):
                 replic = 'введите название следующей вакансии или скажите стоп, чтобы сохранить'
                 out_say(message, 2)
 
+        elif dialog == 4:
+            check = func.check_vac(message.text)
+            bot.send_message(message.chat.id, check)
+            dialog == 0
+
         elif dialog == -1:
             if (languageModule.translator((message.text).lower()) != '/stop') and (languageModule.translator((message.text).lower()) != '/cancel'):
                 func.delskill((message.text).lower())
@@ -183,6 +188,11 @@ def understand (message):
                 replic = "Загружены демонстрационные вакансии"
                 out_say(message, 0)
             
+            elif output == '/check':
+                dialog = 9
+                replic = 'Введите вакансию: \n'
+                out_say(message, 4)
+
             #для удаления навыков:
             elif output == '/delskill':
                 dialog = 9

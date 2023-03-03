@@ -19,5 +19,7 @@ def working (user, choise=''):
             return func.allpreview(func.base_of_skills)
         case '/rate':
             return func.rate()
+        case '/find':
+            return func.find_me_job()
         case _:
             return choise

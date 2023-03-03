@@ -10,10 +10,14 @@ def translator (users_text):
     delete = '/deleteудалитьснесиснестиуничтожьуничтожитьаннигилироватьаннигилируйубериубрать'
     demo = '/demoдемонстрацияпробныетестовыепримерные'
     cancel = '/cancelresetотменитьотменазабейотставить'
+    check = '/checkupчекнипроверьсовместимость'
+    find = '/findjobработуподходящуюнайдипоищиработаподойдетосилю'
     
     for word in str(users_text).lower().split():
         if word in start:
             return '/start'
+        elif word in find:
+            return '/find'
 
     if str(users_text).split()[0].lower() in add:
         if str(users_text).split()[-1].lower() in addvac:
@@ -30,6 +34,8 @@ def translator (users_text):
             return '/allskill'
         elif str(users_text).split()[-1].lower() in rate:
             return '/rate'
+        elif str(users_text).split()[-1].lower() in check:
+            return '/check'
         else:
             return users_text
     
