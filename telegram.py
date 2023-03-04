@@ -7,6 +7,8 @@ import languageModule
 import talkingModule
 import time
 
+from aiogram.types import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton
+
 
 try:
     with open ('token.json', 'r', encoding='UTF-8') as tk:
@@ -63,6 +65,14 @@ def start_message(message):
         bot.send_message(message.chat.id, output)
     except:
         error(message)
+
+@bot.message_handler(commands=['test']) 
+def start_message(message):
+    markup = telebot.types.InlineKeyboardMarkup()
+    markup.add(telebot.types.InlineKeyboardButton(text='Три', callback_data=3))     
+    markup.add(telebot.types.InlineKeyboardButton(text='Четыре', callback_data=4))
+    markup.add(telebot.types.InlineKeyboardButton(text='Пять', callback_data=5))
+    bot.send_message(message.chat.id, text="Какая средняя оценка была у Вас в школе?", reply_markup=markup) 
 
 @bot.message_handler(content_types=['text'])
 def data_input(message):
@@ -205,6 +215,20 @@ def understand (message):
                 replic = 'Отправьте названия вакансий для их удаления, затем отправьте стоп - для сохранения изменений, или отмена - для сброса\n'
                 out_say(message, -2)
 
+            elif output == '/menu':
+                markup = telebot.types.InlineKeyboardMarkup()
+                markup.add(telebot.types.InlineKeyboardButton(text='Загрузить тестовые вакансии', callback_data=1))     
+                markup.add(telebot.types.InlineKeyboardButton(text='Добавить вакансии в базу', callback_data=2))
+                markup.add(telebot.types.InlineKeyboardButton(text='Добавить навыки в резюме', callback_data=3))
+                markup.add(telebot.types.InlineKeyboardButton(text='Посмотреть на вакансии', callback_data=4))
+                markup.add(telebot.types.InlineKeyboardButton(text='Инфо о вакансии', callback_data=5))
+                markup.add(telebot.types.InlineKeyboardButton(text='Полюбоваться навыками', callback_data=6))
+                markup.add(telebot.types.InlineKeyboardButton(text='Общая статистика', callback_data=7))
+                markup.add(telebot.types.InlineKeyboardButton(text='Подбор подходящих вакансий', callback_data=8))
+                markup.add(telebot.types.InlineKeyboardButton(text='Как пользоваться ботом?', callback_data=9))
+                bot.send_message(message.chat.id, text="Чего изволите?", reply_markup=markup)
+                
+                
             
 
             # AI для поддержания диалога
@@ -237,6 +261,8 @@ def talking(message):
     except:
         error(message, 'Так хотел ответить Вам что-нибудь остроумное, что случайно всё сломал')
 
+
+
 def out_say(message, step=0):
     global dialog
     global replic
@@ -246,6 +272,19 @@ def out_say(message, step=0):
             dialog = step
     except: 
         error(message, 'Почему-то не получается построить диалог')
+        
+@bot.callback_query_handler(func=lambda call: True) 
+def query_handler(call):
+    bot.answer_callback_query(callback_query_id=call.id, text='Сейчас попробуем')
+    answer = ''
+    if call.data == '1':
+        understand('/demo')
+    elif call.data == '2':
+        return('/addvac')
+    elif call.data == '3':
+        answer = 'Вы отличник!'      
+    bot.send_message(call.message.chat.id, answer) 
+    bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id)
 
 @bot.message_handler(content_types=['sticker'])
 def sticker_input(message):
@@ -254,6 +293,6 @@ def sticker_input(message):
         bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIDj2P80Kf2YKS55GsH45nircucbFqjAAJBEQACA04JSn3DX5Qm6dIJLgQ')
         bot.send_message(message.chat.id, 'Что бы этот стикер значил? \n(пока это риторический вопрос)')
     except:
-        error(message)    
-
+        error(message)
+        
 bot.polling()
