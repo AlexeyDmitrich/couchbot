@@ -72,7 +72,7 @@ def print_help ():
     /allvac \t- просмотр имеющихся вакансий
     /allskill \t- просмотр своего опыта
     /rate \t- посмотреть совместимость своего опыта с имеющимися вакансиями
-    /stop \t- остановить бота (будет предложено сохранить сеанс)
+    /stop \t- сохранить сеанс
     /help \t- показать эту страницу помощи
     ''')
     return man_text
@@ -143,7 +143,7 @@ def check_vac (vacancy):
     check = '''
     '''
     for vac in base_of_vacancis:
-        if vac[0] == vacancy:
+        if vac[0].lower() == vacancy.lower():
             check+= (f'Вакансия: {(vac[0])}\nИмеющиеся навыки:\n')
             count_of_skills = len(vac[1])
             rate_counter = 0
@@ -158,7 +158,8 @@ def check_vac (vacancy):
                     check += (f' - {skill}\n')
             percent = (rate_counter/count_of_skills)*100
             check += (f'\n Вы на {percent}% подготовлены к этой работе')
-            
+        else:
+            check = ('Вакансия с таким названием не найдена. \n Скажите "покажи вакансии", и я пришлю все, какие есть')
     return check
 
 def find_me_job ():
