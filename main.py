@@ -1,10 +1,10 @@
 import menu
 import functions
-import telegram
+import bodybot
 
-print ('\n \t \t *** Версия 1.1: сырая, но работает. ***')
+print ('\n \t \t *** Версия 1.2: сырая, но функциональная. ***')
 
-telegram.bot
+bodybot.bot
 
 # functions.load()
 # menu.wokring()

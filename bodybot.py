@@ -33,6 +33,7 @@ API_URL = 'https://7012.deeppavlov.ai/model'
 
 users = [] # нужен какой-то учёт пользователей
 user = ''
+log = [user, []]
 load_status = False
 dialog = 0 
 # 0 - стоп
@@ -45,9 +46,17 @@ replic = 'пустой респонз'
 vacancy = ''
 need_skill = []
 
-def error(message, description='Кажется, всё сломалось'):
-    bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIDjmP8y9nCt64diU-3bguNT_3csgABlQACagEAAs6YzRYbIlPARgMMCC4E')
+def error(message, info, description='Кажется, всё сломалось'):
+    global user
+    global log
+    bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIHM2QEpe_v0Vn-YUI1w2QGZIFY6r_nAAJCBwACRvusBH1aiEB35lPMLgQ') #'CAACAgIAAxkBAAIDjmP8y9nCt64diU-3bguNT_3csgABlQACagEAAs6YzRYbIlPARgMMCC4E')
     bot.send_message(message.chat.id, description)
+    log[1].append(info)
+    try:
+        with open ('errlog.json', 'w', encoding='UTF-8') as er:
+            er.write(json.dumps(log, ensure_ascii=False))
+    except:
+        print('Сбой логгирования')
 
 @bot.message_handler(commands=['start'])
 def start_message(message):
@@ -66,7 +75,7 @@ def start_message(message):
         # telebot.types.InlineKeyboardButton('меню', callback_data='меню')
         # bot.send_message(message.chat_id, text='Меню')
     except:
-        error(message)
+        error(message, 'Ошибка в модуле start_message')
 
 @bot.message_handler(commands=['menu'])#, regexp='меню')
 def gui_menu(message):
@@ -94,7 +103,7 @@ def gui_menu_from_text(message):
     choise.add(telebot.types.InlineKeyboardButton(text='Общая статистика', callback_data='/rate'))
     choise.add(telebot.types.InlineKeyboardButton(text='Подбор подходящих вакансий', callback_data='/find'))
     choise.add(telebot.types.InlineKeyboardButton(text='Как пользоваться ботом?', callback_data='/help'))
-    bot.send_message(message.chat.id, text="МЕНЮ", reply_markup=choise)
+    bot.send_message(message.chat.id, text="*МЕНЮ*", reply_markup=choise, parse_mode='MARKDOWN')
 
 @bot.callback_query_handler(func=lambda call: True) 
 def query_handler(call):
@@ -139,7 +148,21 @@ def query_handler(call):
     # menu_choise = answer
     # dialog = 5
 
-
+@bot.message_handler(regexp='привет')
+def hello_user(message):
+    bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIHB2QEjQIBEJD1pZvNYu8YY6WWN0ZHAAI-BwACRvusBK9cOl7BGYj2LgQ')
+    bot.send_message(message.chat.id, func.hello(), parse_mode='MARKDOWN')
+    
+@bot.message_handler(regexp='спасибо')
+def thank_user(message):
+    bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIHQ2QErs4HgWCIDatcozgEDaavRlH4AAI2BwACRvusBAqX86rdUV82LgQ')
+    bot.send_message(message.chat.id, "Вежливость по отношению к боту это так мило! 🥰 _Обращайтесь_)", parse_mode='MARKDOWN')
+    
+@bot.message_handler(regexp='до свидания')
+def bye_user(message):
+    func.save(message.from_user.id)
+    bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIHRmQEr-xvBpCV-JwHUCsDWaIaPrNeAAIuBwACRvusBPxoaF47DCKVLgQ')
+    bot.send_message(message.chat.id, "До свидания! <b>Не забывайте добавлять навыки</b>.", parse_mode='HTML')
 
 
 @bot.message_handler(content_types=['text'])
@@ -217,7 +240,7 @@ def data_input(message):
 
         else: understand(message)
     except:
-        error(message)
+        error(message, "Ошибка в диалоговом модуле при вводе данных")
         
 def understand (message):
     global load_status
@@ -230,7 +253,7 @@ def understand (message):
             func.load(user)
             load_status = True
     except:
-        error(message, 'Не получается загрузить данные')
+        error(message, "ошибка на входе в модуль understand", 'Не получается загрузить данные')
     
     text = message.text
     print(text)
@@ -301,7 +324,7 @@ def understand (message):
                 except:
                     bot.send_message(message.chat.id, f'Запрос: {output} \n не получилось обработать')
     except:
-        error(message, 'Что-то пошло не так. Попробуйте другой запрос.')
+        error(message, 'ошибка в основном блоке модуля understand', 'Что-то пошло не так. Попробуйте другой запрос.')
 
 
 def talking(message):
@@ -322,7 +345,7 @@ def talking(message):
         print(res)
         bot.send_message(message.chat.id, res)
     except:
-        error(message, 'Так хотел ответить Вам что-нибудь остроумное, что случайно всё сломал')
+        error(message, 'Сторонее API не справилось с задачей', 'Так хотелось ответить Вам что-нибудь остроумное, но что-то сломалось')
 
 
 
@@ -334,17 +357,17 @@ def out_say(message, step=0):
             bot.send_message(message.chat.id, replic)
             dialog = step
     except: 
-        error(message, 'Почему-то не получается построить диалог')
+        error(message, "Ошибка где-то в диалоге", 'Почему-то не получается построить диалог')
         
 
 @bot.message_handler(content_types=['sticker'])
 def sticker_input(message):
     try:
         print(message.sticker.file_id)
-        bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIDj2P80Kf2YKS55GsH45nircucbFqjAAJBEQACA04JSn3DX5Qm6dIJLgQ')
+        bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIHNmQEpr_DbhX4NMDVVmtGL5rPbRrsAAJJBwACRvusBCGgUFw9zcWhLgQ') #'CAACAgIAAxkBAAIDj2P80Kf2YKS55GsH45nircucbFqjAAJBEQACA04JSn3DX5Qm6dIJLgQ')
         bot.send_message(message.chat.id, 'Что бы этот стикер значил? \n(пока это риторический вопрос)')
     except:
-        error(message)
+        error(message, "Исключение при обработке стикера")
         
 
         
