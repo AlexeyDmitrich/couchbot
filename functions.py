@@ -63,7 +63,7 @@ def save (user):
 def print_help ():
     man_text = ('''
     Бот расчитан на взаимодействие с простыми командами на русском языке,
-    сформулированными одним словом.
+    сформулированными одним - двумя словами без знаков препинания.
     Но этот метод ещё в разработке, поэтому, вот перечень основных команд,
     если он не понял по-русски:
     /start \t- начать взаимодействие с ботом
@@ -72,7 +72,7 @@ def print_help ():
     /allvac \t- просмотр имеющихся вакансий
     /allskill \t- просмотр своего опыта
     /rate \t- посмотреть совместимость своего опыта с имеющимися вакансиями
-    /stop \t- остановить бота (будет предложено сохранить сеанс)
+    /stop \t- сохранить сеанс
     /help \t- показать эту страницу помощи
     ''')
     return man_text
@@ -179,14 +179,12 @@ def rate ():
             res += (f"Вакансия: {value[i][0]} \t\t Рейтинг: {key}/{len(value[i][1])} \n")
     return(f'{rate_head} \n{res}')
 
-
-
 # чек вакансии
 def check_vac (vacancy):
     check = '''
     '''
     for vac in base_of_vacancis:
-        if vac[0] == vacancy:
+        if vac[0].lower() == vacancy.lower():
             check+= (f'Вакансия: {(vac[0])}\nИмеющиеся навыки:\n')
             count_of_skills = len(vac[1])
             rate_counter = 0
@@ -194,14 +192,15 @@ def check_vac (vacancy):
                 if skill in base_of_skills:
                     check += (f' + {skill}\n')
                     rate_counter += 1
-            if rate_counter == 0: check += (" -- нет --")
+            if rate_counter == 0: check += (" -- нет --\n")
             check+= (f'Недостающие навыки:\n')
             for skill in vac[1]:
                 if skill not in base_of_skills:
                     check += (f' - {skill}\n')
             percent = (rate_counter/count_of_skills)*100
             check += (f'\n Вы на {percent}% подготовлены к этой работе')
-            
+        else:
+            check = ('Вакансия с таким названием не найдена. \n Скажите "покажи вакансии", и я пришлю все, какие есть')
     return check
 
 def find_me_job ():
@@ -210,51 +209,26 @@ def find_me_job ():
     propose = '''
     '''
     for vac in base_of_vacancis:
-        print (f'vac \t:\t {vac}')
         count_of_skills = len(vac[1])
-        print(f'count_of_skills \t:\t {count_of_skills}')
         rate_counter = 0
-        print(f'rate_counter \t:\t {rate_counter}')
         for skill in vac[1]:
-            print(f'skill in vac[1] \t:\t {skill}')
             if skill in base_of_skills:
-                print(f'skill in base_of_skills \t:\t true')
                 rate_counter += 1
-                print(f'rate_couner \t:\t {rate_counter}')
         percent = (rate_counter/count_of_skills)*100
-        print(f'percent \t:\t {percent}')
         vac[2] = percent
-        print(f'vac[2]({vac[0]}) \t:\t {vac[2]}')
-
-    
+  
     lead1 = base_of_vacancis[0]
-    # print(f'lead1 \t:\t {lead1}')
-    # highest_per1 = lead1[2]
-    # print(f'highest_per1 \t:\t {highest_per1}')
     lead2 = base_of_vacancis[0]
-    # print(f'lead2 \t:\t {lead2}')
-    # highest_per2 = lead2[2]
-    # print(f'highest_per2 \t:\t {highest_per2}')
     lead3 = base_of_vacancis[0]
-    # print(f'lead3 \t:\t {lead3}')
-    # highest_per3 = lead3[2]
-    # print(f'highest_per3 \t:\t {highest_per3}')
     top = 2
     while top !=0:
         for vac in base_of_vacancis:
-            # print(f'vac in base_of_vacancis \t:\t {vac}')
             if vac[2] >= lead1[2]:
                 lead1 = vac
-                # print(f'lead1 \t:\t {lead1[0]}')
             elif vac[2] >= lead2[2]:
                 lead2 = vac
-                # print(f'lead2 \t:\t {lead2[0]}')
             elif vac[2] >= lead3[2]:
                 lead3 = vac
-                # print(f'lead3 \t:\t {lead3[0]}')
-            # print(f'''lead1 : \t {lead1[0]} \nlead1[2] : \t {lead1[2]}  
-            #         lead2 : \t {lead2[0]} \nlead2[2] : \t {lead2[2]}  
-            #         lead3 : \t {lead3[0]} \nlead3[2] : \t {lead3[2]}  ''')
         top -= 1
         
     def form_check (vac):
@@ -265,18 +239,18 @@ def find_me_job ():
         check += (f'{vac[0]}')
         count_of_skills = len(vac[1])
         rate_counter = 0
-        check += ('Имеющиеся навыки:')
+        check += ('Имеющиеся навыки:\n')
         for skill in vac[1]:
             if skill in base_of_skills:
                 check += (f' + {skill}\n')
                 rate_counter += 1
-        if rate_counter == 0: check += (" -- нет --")
+        if rate_counter == 0: check += (" -- нет --\n")
         check+= (f'Недостающие навыки:\n')
         for skill in vac[1]:
             if skill not in base_of_skills:
                 check += (f' - {skill}\n')
         percent = (rate_counter/count_of_skills)*100
-        check += (f'\n Вы на {percent}% подготовлены к этой работе')
+        check += (f'Вы на {percent}% подготовлены к этой работе\n---------------\n')
         return check
     
     propose += (f" На данном этапе Вам больше всего стоит присмотреться к следующим вакансиям:")
@@ -284,6 +258,4 @@ def find_me_job ():
     propose += (f" \n{form_check(lead2)} ")
     propose += (f" \n{form_check(lead3)} ")
     
-    print(f'propose \t:\n {propose}')
-
     return propose
