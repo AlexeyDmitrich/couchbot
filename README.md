@@ -1,5 +1,5 @@
 ## Бот для Telegram помогающий в поиске работы
-
+_берёт своё начало в [семинаре](https://github.com/AlexeyDmitrich/python_introduction/tree/master/seminar8/bot)_
 Бот является потомком [консольного чат-бота](https://github.com/AlexeyDmitrich/python_introduction/blob/master/seminar7/homeTaskOptionalBot.py), но предназначен
 для работы через сервер Telegram.
 
