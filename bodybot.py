@@ -277,7 +277,7 @@ def understand (message):
         
         if output != translate: # если команда что-то вернула, кроме самой себя
             print(output)
-            bot.send_message(message.chat.id, output)       # (для команд, которые есть в меню)
+            bot.send_message(message.chat.id, output, parse_mode='MARKDOWN')       # (для команд, которые есть в меню)
         else:   # если команды не нашлось
 
              # для добавления скиллов:

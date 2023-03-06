@@ -37,6 +37,10 @@ def translator (users_text):
                 potential_command += "start"
             if word in stop:
                 potential_command += "stop"
+            # if word in hello:
+            #     potential_command += "hello"
+            # if word in bye:
+            #     potential_command += "bye"
 
             if word in help:
                 potential_command += "help"
@@ -62,7 +66,8 @@ def translator (users_text):
 
             if word in cancel:
                 potential_command += "cancel"
-
+        
+        return potential_command
 
                                                           
 
