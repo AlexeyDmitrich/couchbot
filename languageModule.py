@@ -1,18 +1,71 @@
+import talkingModule as tm
+
 def translator (users_text):
-    start = '/startrungoстартпускпоехалиначалиничинайначнемначнём'
-    stop = '/stopстопостановитьхватитпрекратиуйтивыходвыйтизакончитьдостаточносохранитьвсёвсеexitquit'
-    help = '''/helpmanualпомощьпомочьпомогитемануалсправка'''
-    show = 'showviewopenпокажипоказатьпросмотретьпосмотретьвзглянутьоткрытьоткройсформируйвыведивывести'
-    add = 'добавитьдобавьвнестивнесидополнитьсоздатьсоздай'
-    addvac = '/addvacвакансиивакансиювакант' 
-    addskill = '/addskillопытумениеуменияпрактикускиллынавыки'  
-    rate = '/ratestatisticрейтингстатистикастатистикупроанализируй' 
-    delete = '/deleteудалитьснесиснестиуничтожьуничтожитьаннигилироватьаннигилируйубериубрать'
-    demo = '/demoдемонстрацияпробныетестовыепримерные'
-    cancel = '/cancelresetотменитьотменазабейотставить'
-    check = '/checkupчекнипроверьсовместимость'
-    find = '/findjobработуподходящуюнайдипоищиработаподойдетосилю'
-    
+    users_text = tm.vocablary_text(users_text)
+
+    start = '/start run go старт пуск поехать начинать' 
+        #   '/start run go старт пуск поехали начали начинай начнем начнём'
+    stop = '/stop стоп останавливать хватить прекращать уходить выход выходить заканчивать достаточно сохранять все exit quit'
+        #  '/stop стоп остановить хватит прекрати уйти выход выйти закончить достаточно сохранить всё все exit quit'
+    help = '/help manual помощь помогать мануал справка' 
+        #  '/help manual помощь помочь помогите мануал справка мочь уметь'
+    show = 'show view open показывать просматривать посмотреть глянуть взглядывать открывать сформировывать вывести' 
+        #  'show view open покажи показать просмотреть посмотреть взглянуть открыть открой сформируй выведи вывести'
+    add = 'добавлять вносить дополнять создавать' 
+        # 'добавить добавь внести внеси дополнить создать создай'
+    addvac = '/addvac вакансия вакант' 
+        #    '/addvac вакансии вакансию вакант' 
+    addskill = '/addskill опыт умение практика скилла скил навык' 
+        #      '/addskill опыт умение умения практику скиллы скилл скилы скил навыки'  
+    rate = '/rate statistic рейтинг статистика проанализировать ' 
+        #  '/rate statistic рейтинг статистика статистику проанализируй' 
+    delete = '/delete удалять снести уничтожать аннигилироваться убирать' 
+        #    '/delete удалить снеси снести уничтожь уничтожить аннигилировать аннигилируй убери убрать'
+    demo = '/demo демонстрация пробный тестовый примерный' 
+        #  '/demo демонстрация пробные тестовые примерные'
+    cancel = '/cancel reset отменять отмена забивать отставлять' 
+        #    '/cancel reset отменить отмена забей отставить'
+    check = '/checkup чекать чек проверять совместимость' 
+        #   '/checkup чекни чек проверь совместимость'
+    find = '/findjob работа подходить находить поискать осиливать' 
+        #  '/findjob работу подходящую найди поищи работа подойдет осилю'
+
+    def construct_phrase (users_text):
+        potential_command = ''
+        for word in users_text.split():
+            if word in start:
+                potential_command += "start"
+            if word in stop:
+                potential_command += "stop"
+
+            if word in help:
+                potential_command += "help"
+            if word in show:
+                potential_command += "show"
+            if word in add:
+                potential_command += "add"
+            if word in find:
+                potential_command += "find"  
+            if word in delete:
+                potential_command += "delete"  
+            if word in check:
+                potential_command += "check"
+
+            if word in addvac:
+                potential_command += "vacancy"
+            if word in demo:
+                potential_command += "demo"
+            if word in addskill:
+                potential_command += "skill"
+            if word in rate:
+                potential_command += "rate"
+
+            if word in cancel:
+                potential_command += "cancel"
+
+
+                                                          
+
     for word in str(users_text).lower().split():
         if word in start:
             return '/start'
