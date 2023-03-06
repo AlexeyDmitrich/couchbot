@@ -1,11 +1,13 @@
 import talkingModule as tm
 
+test_text = input('ожидается ввод тестовой фразы')
+
 def translator (users_text):
     users_text = tm.vocablary_text(users_text)
 
-    start = '/start run go старт пуск поехать начинать' 
+    start = ['/start', 'run', 'go', 'старт', 'пуск', 'поехать', 'начинать'] 
         #   '/start run go старт пуск поехали начали начинай начнем начнём'
-    stop = '/stop стоп останавливать хватить прекращать уходить выход выходить заканчивать достаточно сохранять все exit quit'
+    stop = ['/stop', 'стоп', 'останавливать', 'хватить', 'прекращать', 'уходить', 'выход', 'выходить', 'заканчивать', 'достаточно', 'сохранять', 'все', 'exit', 'quit']
         #  '/stop стоп остановить хватит прекрати уйти выход выйти закончить достаточно сохранить всё все exit quit'
     help = '/help manual помощь помогать мануал справка' 
         #  '/help manual помощь помочь помогите мануал справка мочь уметь'
@@ -68,6 +70,8 @@ def translator (users_text):
                 potential_command += "cancel"
         
         return potential_command
+    
+    return construct_phrase(users_text)
 
                                                           
 
@@ -128,4 +132,6 @@ def translator (users_text):
                             return users_text
 
 
-    
+
+
+print(translator(test_text))
