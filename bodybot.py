@@ -158,7 +158,7 @@ def thank_user(message):
     bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIHQ2QErs4HgWCIDatcozgEDaavRlH4AAI2BwACRvusBAqX86rdUV82LgQ')
     bot.send_message(message.chat.id, "Вежливость по отношению к боту это так мило! 🥰 _Обращайтесь_)", parse_mode='MARKDOWN')
     
-@bot.message_handler(regexp='до свидания')
+@bot.message_handler(regexp='пока')
 def bye_user(message):
     func.save(message.from_user.id)
     bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIHRmQEr-xvBpCV-JwHUCsDWaIaPrNeAAIuBwACRvusBPxoaF47DCKVLgQ')
