@@ -195,8 +195,10 @@ def check_vac (vacancy):
                     check += (f' - {skill}\n')
             percent = (rate_counter/count_of_skills)*100
             check += (f'\n Вы на {percent}% подготовлены к этой работе')
-        else:
-            check = ('Вакансия с таким названием не найдена. \n Скажите "покажи вакансии", и я пришлю все, какие есть')
+    
+        return check
+    if vacancy not in base_of_vacancis:
+        check = ('Вакансия с таким названием не найдена. \n Скажите "покажи вакансии", и я пришлю все, какие есть')
     return check
 
 def find_me_job ():

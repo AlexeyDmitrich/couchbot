@@ -206,7 +206,7 @@ def data_input(message):
         elif dialog == 4:
             check = func.check_vac(message.text)
             bot.send_message(message.chat.id, check)
-            dialog == 0
+            dialog = 0
             log(user, message.text, "формируем чек по вакансии")
 
         elif dialog == -1:
