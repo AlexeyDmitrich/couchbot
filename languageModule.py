@@ -31,13 +31,13 @@ def translator (users_text):
         #  '/demo демонстрация пробные тестовые примерные'
     cancel = ['/cancel','reset','отменять','отмена','забивать','отставлять'] 
         #    '/cancel reset отменить отмена забей отставить'
-    check = ['/checkup','чекать','чек','проверять','совместимость'] 
+    check = ['/checkup','чекать','чек','проверять','совместимость', 'подробно'] 
         #   '/checkup чекни чек проверь совместимость'
     find = ['/findjob','подходить','находить','поискать','осиливать'] 
         #  '/findjob работу подходящую найди поищи работа подойдет осилю'
 
     def construct_phrase (users_text):
-        potential_command = []
+        potential_command = ""
         for word in users_text.split():
             # полноценные
             if word in start:
@@ -57,6 +57,7 @@ def translator (users_text):
                 return '/help'
             if word in find:
                 potential_command+=("/find")
+                return "/find"
             if word in cancel:
                 potential_command+=("cancel")
                 return '/cancel'
@@ -119,7 +120,7 @@ def translator (users_text):
         elif str(users_text).split()[-1].lower() in rate:
             return '/rate'
         elif str(users_text).split()[-1].lower() in check:
-            return '/check'
+            return '/checkvac'
         else:
             return users_text
     
