@@ -1,11 +1,14 @@
 import talkingModule as tm
 
-test_text = input('ожидается ввод тестовой фразы:\n')
+# test_text = input('ожидается ввод тестовой фразы:\n')
 
 def translator (users_text):
     users_text = tm.vocablary_text(users_text)
 
-    hello = ['привет','добрый день','приветствовать','здравствовать','приветик','добрый время сутки','добрый вечер','добрый утро']
+    hello = ['привет','добрый','приветствовать','здравствовать','приветик']
+    
+    bye = ['пока','свидание','встреча','удача','успех','хороший','скорый','счастливо']
+    
     start = ['/start', 'run', 'go', 'старт', 'пуск', 'поехать', 'начинать'] 
         #   '/start run go старт пуск поехали начали начинай начнем начнём'
     stop = ['/stop', 'стоп', 'останавливать', 'хватить', 'прекращать', 'уходить', 'выход', 'выходить', 'заканчивать', 'достаточно', 'сохранять', 'все', 'exit', 'quit']
@@ -16,7 +19,7 @@ def translator (users_text):
         #  'show view open покажи показать просмотреть посмотреть взглянуть открыть открой сформируй выведи вывести'
     add = ['добавлять','вносить','дополнять','создавать' ]
         # 'добавить добавь внести внеси дополнить создать создай'
-    addvac = ['/addvac','вакансия','вакант'] 
+    addvac = ['/addvac','вакансия','вакант','работа'] 
         #    '/addvac вакансии вакансию вакант' 
     addskill = ['/addskill','опыт','умение','практика','скилла','скил','навык']
         #      '/addskill опыт умение умения практику скиллы скилл скилы скил навыки'  
@@ -30,53 +33,70 @@ def translator (users_text):
         #    '/cancel reset отменить отмена забей отставить'
     check = ['/checkup','чекать','чек','проверять','совместимость'] 
         #   '/checkup чекни чек проверь совместимость'
-    find = ['/findjob','работа','подходить','находить','поискать','осиливать'] 
+    find = ['/findjob','подходить','находить','поискать','осиливать'] 
         #  '/findjob работу подходящую найди поищи работа подойдет осилю'
 
     def construct_phrase (users_text):
-        potential_command = ''
+        potential_command = []
         for word in users_text.split():
+            # полноценные
             if word in start:
-                potential_command += "start"
+                potential_command+=("/start")
+                return '/start'
             if word in stop:
-                potential_command += "stop"
+                potential_command+=("/stop")
+                return '/stop'
             if word in hello:
-                potential_command += "hello"
-            # if word in bye:
-            #     potential_command += "bye"
-
+                potential_command+=("/hello")
+                return '/hello'
+            if word in bye:
+                potential_command+=("/bye")
+                return '/bye'
             if word in help:
-                potential_command += "help"
-            if word in show:
-                potential_command += "show"
-            if word in add:
-                potential_command += "add"
+                potential_command+=("/help")
+                return '/help'
             if word in find:
-                potential_command += "find"  
-            if word in delete:
-                potential_command += "delete"  
-            if word in check:
-                potential_command += "check"
-
-            if word in addvac:
-                potential_command += "vacancy"
-            if word in demo:
-                potential_command += "demo"
-            if word in addskill:
-                potential_command += "skill"
-            if word in rate:
-                potential_command += "rate"
-
+                potential_command+=("/find")
             if word in cancel:
-                potential_command += "cancel"
+                potential_command+=("cancel")
+                return '/cancel'
+            if word in demo:
+                potential_command+=("demo")
+                return '/demo'
+            if word in rate:
+                potential_command+=("rate")
+                return '/rate'
+            
+            # инициализаторы
+            if word in show:
+                potential_command+=("/all")
+                            
+            elif word in add:
+                potential_command+=("/add")
+            
+            elif word in delete:
+                potential_command+=("/del")
+            
+            elif word in check:
+                potential_command+=("/check")
+            
+            # ключи
+            if word in addvac:
+                potential_command+=("vac")
+            if word in addskill:
+                potential_command+=("skill")
+
+
+
         
-
+#        print(potential_command)
         return potential_command
+        
     
-    return construct_phrase(users_text)
+    potential_comand = construct_phrase(users_text)                     
+    return potential_comand
 
-                                                          
-
+###
     for word in str(users_text).lower().split():
         if word in start:
             return '/start'
@@ -136,4 +156,4 @@ def translator (users_text):
 
 
 
-print(translator(test_text))
+# print(translator(test_text))

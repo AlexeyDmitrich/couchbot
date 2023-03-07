@@ -5,9 +5,10 @@ import json
 import functions as func
 import requests
 import languageModule
+from languageModule import translator as tran
 import talkingModule
 import time
-
+from logger import dump as log
 
 try:
     with open ('token.json', 'r', encoding='UTF-8') as tk:
@@ -31,9 +32,7 @@ except:
 
 API_URL = 'https://7012.deeppavlov.ai/model'
 
-users = [] # нужен какой-то учёт пользователей
 user = ''
-log = [user, []]
 load_status = False
 dialog = 0 
 # 0 - стоп
@@ -48,24 +47,19 @@ need_skill = []
 
 def error(message, info, description='Кажется, всё сломалось'):
     global user
-    global log
     bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIHM2QEpe_v0Vn-YUI1w2QGZIFY6r_nAAJCBwACRvusBH1aiEB35lPMLgQ') #'CAACAgIAAxkBAAIDjmP8y9nCt64diU-3bguNT_3csgABlQACagEAAs6YzRYbIlPARgMMCC4E')
     bot.send_message(message.chat.id, description)
-    log[1].append(info)
     try:
-        with open ('errlog.json', 'w', encoding='UTF-8') as er:
-            er.write(json.dumps(log, ensure_ascii=False))
+        log(user,message.text,description,info="НЕЯВНОЕ ИСКЛЮЧЕНИЕ")
     except:
         print('Сбой логгирования')
 
 @bot.message_handler(commands=['start'])
 def start_message(message):
     global user
-    global users
     global load_status
     try:
         bot.send_message(message.chat.id, "добро пожаловать!")
-        users.append(message.from_user.id)
         user=message.from_user.id
         output = func.load(user)
         load_status = True
@@ -75,7 +69,7 @@ def start_message(message):
         # telebot.types.InlineKeyboardButton('меню', callback_data='меню')
         # bot.send_message(message.chat_id, text='Меню')
     except:
-        error(message, 'Ошибка в модуле start_message')
+        error(message, 'не удаётся загрузить сеанс', 'Ошибка в модуле start_message')
 
 @bot.message_handler(commands=['menu'])#, regexp='меню')
 def gui_menu(message):
@@ -148,21 +142,30 @@ def query_handler(call):
     # menu_choise = answer
     # dialog = 5
 
-@bot.message_handler(regexp='привет')
+@bot.message_handler(func= lambda message:True, content_types=['text', 'sticker'])
 def hello_user(message):
-    bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIHB2QEjQIBEJD1pZvNYu8YY6WWN0ZHAAI-BwACRvusBK9cOl7BGYj2LgQ')
-    bot.send_message(message.chat.id, func.hello(), parse_mode='MARKDOWN')
+    if tran(message.text)=='hello' and (load_status==False or(load_status==True and len(func.base_of_skills)<4)):
+        bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIHB2QEjQIBEJD1pZvNYu8YY6WWN0ZHAAI-BwACRvusBK9cOl7BGYj2LgQ')
+        bot.send_message(message.chat.id, func.hello(), parse_mode='MARKDOWN')
+        log(user, message.text, "функция первого приветствия")
+    elif tran(message.text)=='hello':
+        bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIHB2QEjQIBEJD1pZvNYu8YY6WWN0ZHAAI-BwACRvusBK9cOl7BGYj2LgQ')
+        bot.send_message(message.chat.id, 'Здорово, что мы снова встретились!')
+        log(user, message.text, "функция обычного приветствия")
     
 @bot.message_handler(regexp='спасибо')
 def thank_user(message):
     bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIHQ2QErs4HgWCIDatcozgEDaavRlH4AAI2BwACRvusBAqX86rdUV82LgQ')
     bot.send_message(message.chat.id, "Вежливость по отношению к боту это так мило! 🥰 _Обращайтесь_)", parse_mode='MARKDOWN')
-    
-@bot.message_handler(regexp='пока')
+    log(user, message.text, "ответ на благодарность")
+
+@bot.message_handler(func= lambda message:True, content_types=['text', 'sticker'])
 def bye_user(message):
-    func.save(message.from_user.id)
-    bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIHRmQEr-xvBpCV-JwHUCsDWaIaPrNeAAIuBwACRvusBPxoaF47DCKVLgQ')
-    bot.send_message(message.chat.id, "До свидания! <b>Не забывайте добавлять навыки</b>.", parse_mode='HTML')
+    if tran(message.text)=='bye':
+        func.save(message.from_user.id)
+        bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIHRmQEr-xvBpCV-JwHUCsDWaIaPrNeAAIuBwACRvusBPxoaF47DCKVLgQ')
+        bot.send_message(message.chat.id, "До свидания! <b>Не забывайте добавлять навыки</b>.", parse_mode='HTML')
+        log(user, message.text, "прощание")
 
 
 @bot.message_handler(content_types=['text'])
@@ -179,10 +182,12 @@ def data_input(message):
                 if (message.text).lower() == 'гениальность':
                     bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIDfGP8x7p_xx1of1dE_Tft16jDoBI8AAJGIwACZ1aZSQfInwNd_rM3LgQ')
                     bot.send_message(message.chat.id, 'Простите. Продолжайте.')
+                log(user, message.text, "добавляем в базу навыков")
             else:
                 menu.working(message.from_user.id, '/stop')
                 bot.send_message(message.chat.id, 'я постараюсь запомнить эти навыки')
                 dialog = 0 
+                log(user, message.text, "сохраняем")
 
         elif dialog == 2: 
             if languageModule.translator((message.text).lower()) != '/stop':
@@ -190,11 +195,13 @@ def data_input(message):
                 print(f'input vacancy: {vacancy}')
                 dialog = 9
                 replic = 'Введите требования к кандидату отдельными сообщениями, когда требования кончатся, отправьте "Стоп"'
+                log(user, message.text, "добавляем в базу вакансий")
                 out_say(message, 3)            
             else: 
                 bot.send_message(message.chat.id, 'записал')
                 dialog = 0
                 func.add_vacancy(vacancy, need_skill)
+                log(user, message.text, "сохраняем")
                 menu.working(message.from_user.id, '/stop')
 
         elif dialog == 3:
@@ -202,45 +209,57 @@ def data_input(message):
                 print(f'input text: {message.text}')
                 need_skill.append((message.text).lower())
                 dialog = 3
+                log(user, message.text, "добавляем в требования к вакансии")
             else:
                 dialog = 9
                 replic = 'введите название следующей вакансии или скажите стоп, чтобы сохранить'
                 out_say(message, 2)
+                log(user, message.text, "закончили с этой вакансией")
 
         elif dialog == 4:
             check = func.check_vac(message.text)
             bot.send_message(message.chat.id, check)
             dialog == 0
+            log(user, message.text, "формируем чек по вакансии")
 
         elif dialog == -1:
             if (languageModule.translator((message.text).lower()) != '/stop') and (languageModule.translator((message.text).lower()) != '/cancel'):
                 func.delskill((message.text).lower())
+                log(user, message.text, "удаляем навык из списка, не трогая .json")
             else:
                 if languageModule.translator((message.text).lower()) == '/cancel':
                     bot.send_message(message.chat.id, 'Возвращаю всё как было')
                     dialog = 0
                     func.load(user)
+                    log(user, message.text, "выполняем func.load(user)")
                 else:
                     menu.working(message.from_user.id, '/stop')
                     bot.send_message(message.chat.id, 'Изменения сохранены')
                     dialog = 0
+                    log(user, message.text, "выполняем /stop")
         
         elif dialog == -2:
             if (languageModule.translator((message.text).lower()) != '/stop') and (languageModule.translator((message.text).lower()) != '/cancel'):
                 func.delvac((message.text).lower())
+                log(user, message.text, "приступаем к удалению вакансии")
             else:
                 if languageModule.translator((message.text).lower()) == '/cancel':
                     bot.send_message(message.chat.id, 'Возвращаю всё на место')
                     dialog = 0
                     func.load(user)
+                    log(user, message.text, "выполняем func.load(user)")
                 else:
                     menu.working(message.from_user.id, '/stop')
                     bot.send_message(message.chat.id, 'Изменения сохранены')
                     dialog = 0 
+                    log(user, message.text, "выполняем /stop")
 
-        else: understand(message)
+        else: 
+            log(user, message.text, "выполняем understand к этому сообщению")
+            understand(message)
+        
     except:
-        error(message, "Ошибка в диалоговом модуле при вводе данных")
+        error(message, "Сбой при добавлении, удалении или чеке вакансии","Ошибка в диалоговом модуле при вводе данных")
         
 def understand (message):
     global load_status
@@ -251,6 +270,7 @@ def understand (message):
         if load_status == False:
             user=message.from_user.id
             func.load(user)
+            log(user, message.text, "func.load(user)")
             load_status = True
     except:
         error(message, "ошибка на входе в модуль understand", 'Не получается загрузить данные')
@@ -271,25 +291,29 @@ def understand (message):
         if dialog == 0:
 
             translate = languageModule.translator(text)     # переводим речь в команду для бота
-            # если подходящей команды не нашлось - возвращаем фразу в неизменном виде    
+            # если подходящей команды не нашлось - возвращаем фразу в неизменном виде  
+            log(user, message.text, f"читаю как: {translate}")
             output = str(menu.working(message.from_user.id, translate)) # команда уходит в меню
         
         
         if output != translate: # если команда что-то вернула, кроме самой себя
             print(output)
             bot.send_message(message.chat.id, output, parse_mode='MARKDOWN')       # (для команд, которые есть в меню)
+            log(user, message.text, f"{translate} -> команда есть в меню, возвращаем значение ")
         else:   # если команды не нашлось
 
              # для добавления скиллов:
             if output == '/addskill':
                 dialog = 9
                 replic = 'Введите навык \nесли новых навыков больше нет, скажите стоп \n'
+                log(user, message.text, f"->{translate} : запрашиваем навык")
                 out_say(message, 1)
                     
             # для добавления вакансий
             elif output == '/addvac':
                 dialog = 9
                 replic = 'название вакансии: \n'
+                log(user, message.text, f"->{translate} : запрашиваем название вакансии")
                 out_say(message, 2)
 
             elif output == '/demo':
@@ -297,31 +321,37 @@ def understand (message):
                     func.base_of_vacancis = json.load(vac)
                 dialog = 9
                 replic = "Загружены демонстрационные вакансии"
+                log(user, message.text, f"->{translate} : загружаем демо вакансии")
                 out_say(message, 0)
             
             elif output == '/check':
                 dialog = 9
                 replic = 'Введите вакансию: \n'
+                log(user, message.text, f"->{translate} : запрашиваем название вакансии")
                 out_say(message, 4)
 
             #для удаления навыков:
             elif output == '/delskill':
                 dialog = 9
                 replic = 'Отправьте названия навыков для их удаления, затем отправьте стоп - для сохранения изменений, или отмена - для сброса\n'
+                log(user, message.text, f"->{translate} : запрашиваем название навыка")
                 out_say(message, -1)
 
             #для удаления вакансий:
             elif output == '/delvac':
                 dialog = 9
                 replic = 'Отправьте названия вакансий для их удаления, затем отправьте стоп - для сохранения изменений, или отмена - для сброса\n'
+                log(user, message.text, f"->{translate} : запрашиваем название вакансии")
                 out_say(message, -2)
               
             # AI для поддержания диалога
             else:
     #            bot.send_message(message.chat.id, output)
                 try:
+                    log(user, message.text, f"->{translate} : пробуем получить ответ у Павлова")
                     talking(message)
                 except:
+                    log(user, message.text, f"->{translate} : Павлов ничего не вернул")
                     bot.send_message(message.chat.id, f'Запрос: {output} \n не получилось обработать')
     except:
         error(message, 'ошибка в основном блоке модуля understand', 'Что-то пошло не так. Попробуйте другой запрос.')
@@ -341,6 +371,7 @@ def talking(message):
         try:
             res = requests.post(API_URL, json=data, verify=False).json()
         except:
+            error(message, "некорректный запрос", "API не может понять запрос")
             bot.send_message(message.chat.id, f'Запрос: "{qq}" не получилось обработать')
         print(res)
         bot.send_message(message.chat.id, res)
