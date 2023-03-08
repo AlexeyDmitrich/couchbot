@@ -32,7 +32,7 @@ except:
 
 API_URL = 'https://7012.deeppavlov.ai/model'
 
-user = 'anonymus'
+user = 'anonymus*'
 load_status = False
 dialog = 0 
 # 0 - стоп
@@ -165,7 +165,9 @@ def data_input(message):
     try:
         if dialog == 1:
             if languageModule.translator((message.text).lower()) != '/stop':
-                func.base_of_skills.append((message.text).lower())
+                for skill in ((message.text).lower()).split(';'):
+                    func.base_of_skills.append(skill.strip())
+                # func.base_of_skills.append(((message.text).lower()).split(';'))
                 if (message.text).lower() == 'гениальность':
                     bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIDfGP8x7p_xx1of1dE_Tft16jDoBI8AAJGIwACZ1aZSQfInwNd_rM3LgQ')
                     bot.send_message(message.chat.id, 'Простите. Продолжайте.')
@@ -181,7 +183,7 @@ def data_input(message):
                 vacancy = (message.text).lower()
                 print(f'input vacancy: {vacancy}')
                 dialog = 9
-                replic = 'Введите требования к кандидату отдельными сообщениями, когда требования кончатся, отправьте "Стоп"'
+                replic = 'Введите требования к кандидату отдельными сообщениями, когда требования кончатся, отправьте "Стоп" \nВы можете вводить несколько требований в одном сообщении, разделяя их точкой с запятой (;)'
                 log(user, message.text, "добавляем в базу вакансий")
                 out_say(message, 3)            
             else: 
@@ -194,7 +196,9 @@ def data_input(message):
         elif dialog == 3:
             if languageModule.translator((message.text).lower()) != '/stop':
                 print(f'input text: {message.text}')
-                need_skill.append((message.text).lower())
+                for skill in ((message.text).lower()).split(';'):
+                    func.base_of_vacancis.append(skill.strip())
+                # need_skill.append((message.text).lower())
                 dialog = 3
                 log(user, message.text, "добавляем в требования к вакансии")
             else:
@@ -295,7 +299,7 @@ def understand (message):
              # для добавления скиллов:
             if output == '/addskill':
                 dialog = 9
-                replic = 'Введите навык \nесли новых навыков больше нет, скажите стоп \n'
+                replic = 'Введите навык \nесли новых навыков больше нет, скажите стоп. \nВы можете вводить несколько навыков в одном сообщении, разделяя их точкой с запятой (;)'
                 log(user, message.text, str(f"->{translate} : запрашиваем навык"))
                 out_say(message, 1)
                     

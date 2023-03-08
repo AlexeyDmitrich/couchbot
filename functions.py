@@ -4,6 +4,9 @@ import json as js
 base_of_skills = ["нажимание кнопок", "смотрение в монитор", "стремление к развитию"] # список коротких строк
 base_of_vacancis = [["Deep Learning Специалист", ["ml", "искусственный интеллект", "speech synthesis", "deep learning", "machine learning", "artificial intelligence", "машинное обучение", "voice to lip synch", "ai"], 0]]  # список списков/словарь (или т.п.). Уместить: должность - скиллы - уровень соответствия
 # модель вакансии: [название, [навык-1, навык-2, ..., навык-n], рейтинг] рейтинг - техническая переменная, которая расчитывается
+# for skill in base_of_skills:
+#     skill = skill.strip()
+
 
 rate_to_vacancy = {}
 
@@ -63,8 +66,7 @@ def save (user):
 def hello():
     hello_message = ('''
     *Привет!* 
-    Я - бот, который поможет Вам найти работу по душе. 
-    Ну или по способностям. 
+    Я - бот, который поможет прокачать навыки для устройства на работу. 
     Я стараюсь понимать простые запросы на русском языке, но это не всегда получается, так что рядом с окном ввода есть кнопка *меню*.
     
     Прежде всего нужно нажать кнопку *Загрузить сеанс* - так я пойму с кем общаюсь и смогу загрузить нужные данные.
@@ -96,7 +98,7 @@ def print_help ():
     /allvac \t- просмотр имеющихся вакансий
     /allskill \t- просмотр своего опыта
     /rate \t- посмотреть совместимость своего опыта с имеющимися вакансиями
-    /find \t- 
+    /find \t- подобрать работу по навыкам
     /stop \t- сохранить сеанс
     /help \t- показать эту страницу помощи
     ''')
@@ -179,9 +181,11 @@ def rate ():
 def check_vac (vacancy):
     check = '''
     '''
+    counter = 0
     for vac in base_of_vacancis:
         if vac[0].lower() == vacancy.lower():
-            check+= (f'Вакансия: {(vac[0])}\nИмеющиеся навыки:\n')
+            counter += 1
+            check+= (f'\n********\nВакансия: {(vac[0])}\nИмеющиеся навыки:\n')
             count_of_skills = len(vac[1])
             rate_counter = 0
             for skill in vac[1]:
@@ -194,13 +198,12 @@ def check_vac (vacancy):
                 if skill not in base_of_skills:
                     check += (f' - {skill}\n')
             percent = (rate_counter/count_of_skills)*100
-            check += (f'\n Вы на {percent}% подготовлены к этой работе')
-    
-        return check
-    if vacancy not in base_of_vacancis:
+            check += (f'\n Вы на {round(percent, 1)}% подготовлены к этой работе\n')
+    if counter == 0:
         check = ('Вакансия с таким названием не найдена. \n Скажите "покажи вакансии", и я пришлю все, какие есть')
     return check
 
+# подбор подходящих вакансий
 def find_me_job ():
     global base_of_skills
     global base_of_vacancis
@@ -248,7 +251,7 @@ def find_me_job ():
             if skill not in base_of_skills:
                 check += (f' - {skill}\n')
         percent = (rate_counter/count_of_skills)*100
-        check += (f'Вы на {percent}% подготовлены к этой работе\n---------------\n')
+        check += (f'Вы на {round(percent, 1)}% подготовлены к этой работе\n---------------\n')
         return check
     
     propose += (f" На данном этапе Вам больше всего стоит присмотреться к следующим вакансиям:")
