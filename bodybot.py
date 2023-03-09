@@ -72,6 +72,14 @@ def start_message(message):
     except:
         error(message, 'не удаётся загрузить сеанс', 'Ошибка в модуле start_message')
 
+@bot.message_handler(regexp='отмена')
+def cancel (message):
+    global dialog
+    bot.send_message(message.chat.id, "отменяем изменения")
+    dialog = 0
+    log(user, message.text, "выполняем func.load(user)")
+    return func.load(user)
+
 @bot.message_handler(commands=['menu'])#, regexp='меню')
 def gui_menu(message):
     choise = telebot.types.InlineKeyboardMarkup()
@@ -197,7 +205,8 @@ def data_input(message):
             if languageModule.translator((message.text).lower()) != '/stop':
                 print(f'input text: {message.text}')
                 for skill in ((message.text).lower()).split(';'):
-                    func.base_of_vacancis.append(skill.strip())
+                    if len(skill.strip()) > 1:
+                        need_skill.append(skill.strip())
                 # need_skill.append((message.text).lower())
                 dialog = 3
                 log(user, message.text, "добавляем в требования к вакансии")
