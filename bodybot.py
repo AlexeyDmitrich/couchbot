@@ -212,7 +212,7 @@ def data_input(message):
         elif dialog == -1:
             if (languageModule.translator((message.text).lower()) != '/stop') and (languageModule.translator((message.text).lower()) != '/cancel'):
                 func.delskill((message.text).lower())
-                log(user, message.text, "удаляем навык из списка, не трогая .json")
+                log(user, message.text, "удаляем навык из списка не трогая .json")
             else:
                 if languageModule.translator((message.text).lower()) == '/cancel':
                     bot.send_message(message.chat.id, 'Возвращаю всё как было')
@@ -289,7 +289,7 @@ def understand (message):
         if output != translate: # если команда что-то вернула, кроме самой себя
             print(output)
             bot.send_message(message.chat.id, output, parse_mode='MARKDOWN')       # (для команд, которые есть в меню)
-            log(user, message.text, str(f"{translate} -> команда есть в меню, возвращаем значение "))
+            log(user, message.text, str(f"{translate} -> команда есть в меню: возвращаем значение"))
         else:   # если команды не нашлось
 
              # для добавления скиллов:
