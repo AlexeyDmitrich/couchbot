@@ -72,6 +72,14 @@ def start_message(message):
     except:
         error(message, 'не удаётся загрузить сеанс', 'Ошибка в модуле start_message')
 
+@bot.message_handler(regexp='отмена')
+def cancel (message):
+    global dialog
+    bot.send_message(message.chat.id, "отменяем изменения")
+    dialog = 0
+    log(user, message.text, "выполняем func.load(user)")
+    return func.load(user)
+
 @bot.message_handler(commands=['menu'])#, regexp='меню')
 def gui_menu(message):
     choise = telebot.types.InlineKeyboardMarkup()
@@ -197,7 +205,8 @@ def data_input(message):
             if languageModule.translator((message.text).lower()) != '/stop':
                 print(f'input text: {message.text}')
                 for skill in ((message.text).lower()).split(';'):
-                    func.base_of_vacancis.append(skill.strip())
+                    if len(skill.strip()) > 1:
+                        need_skill.append(skill.strip())
                 # need_skill.append((message.text).lower())
                 dialog = 3
                 log(user, message.text, "добавляем в требования к вакансии")
@@ -222,7 +231,7 @@ def data_input(message):
         elif dialog == -1:
             if (languageModule.translator((message.text).lower()) != '/stop') and (languageModule.translator((message.text).lower()) != '/cancel'):
                 func.delskill((message.text).lower())
-                log(user, message.text, "удаляем навык из списка, не трогая .json")
+                log(user, message.text, "удаляем навык из списка не трогая .json")
             else:
                 if languageModule.translator((message.text).lower()) == '/cancel':
                     bot.send_message(message.chat.id, 'Возвращаю всё как было')
@@ -299,7 +308,7 @@ def understand (message):
         if output != translate: # если команда что-то вернула, кроме самой себя
             print(output)
             bot.send_message(message.chat.id, output, parse_mode='MARKDOWN')       # (для команд, которые есть в меню)
-            log(user, message.text, str(f"{translate} -> команда есть в меню, возвращаем значение "))
+            log(user, message.text, str(f"{translate} -> команда есть в меню: возвращаем значение"))
         else:   # если команды не нашлось
 
              # для добавления скиллов:
