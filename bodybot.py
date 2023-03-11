@@ -213,6 +213,12 @@ def data_input(message):
             dialog = 0
             log(user, message.text, "формируем чек по вакансии")
 
+        elif dialog == 5:
+            check = func.check_skill(message.text)
+            bot.send_message(message.chat.id, check)
+            dialog = 0
+            log(user, message.text, "формируем чек по навыку")
+
         elif dialog == -1:
             if (languageModule.translator((message.text).lower()) != '/stop') and (languageModule.translator((message.text).lower()) != '/cancel'):
                 func.delskill((message.text).lower())
@@ -323,6 +329,12 @@ def understand (message):
                 replic = 'Введите вакансию: \n'
                 log(user, message.text, str(f"->{translate} : запрашиваем название вакансии"))
                 out_say(message, 4)
+                
+            elif output == '/checkskill':
+                dialog = 9
+                replic = 'Введите навык: \n'
+                log(user, message.text, str(f"->{translate} : запрашиваем название навыка"))
+                out_say(message, 5)
 
             #для удаления навыков:
             elif output == '/delskill':
