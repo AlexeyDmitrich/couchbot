@@ -39,11 +39,18 @@ dialog = 0
 # 1 - ожидание ввода навыка
 # 2 - ожидание ввода вакансии
 # 3 - ожидание ввода требования
+# 4 - чек вакансии
+# 5 - чек навыка
+# -1- удаление навыка
+# -2- удаление вакансии
+        # 8 - разговор (экспериментально)
 # 9 - исходящие
+
 menu_choise = ''
 replic = 'пустой респонз'
 vacancy = ''
 need_skill = []
+users_text = ''
 
 def error(message, info, description='Кажется, всё сломалось'):
     global user
@@ -65,10 +72,7 @@ def start_message(message):
         output = func.load(user)
         load_status = True
         print(f"user={message.from_user.id}")
-    #    print(message)
         bot.send_message(message.chat.id, output)
-        # telebot.types.InlineKeyboardButton('меню', callback_data='меню')
-        # bot.send_message(message.chat_id, text='Меню')
     except:
         error(message, 'не удаётся загрузить сеанс', 'Ошибка в модуле start_message')
 
@@ -80,7 +84,57 @@ def cancel (message):
     log(user, message.text, "выполняем func.load(user)")
     return func.load(user)
 
-@bot.message_handler(commands=['menu'])#, regexp='меню')
+# if dialog == 8:
+#     @bot.message_handler(content_types=['text'])
+#     def gui_menu(message):
+#         choise = telebot.types.InlineKeyboardMarkup()
+#         choise.add(telebot.types.InlineKeyboardButton(text='Приветствие', callback_data='hello')) 
+#         choise.add(telebot.types.InlineKeyboardButton(text='Прощание', callback_data='bye')) 
+#         choise.add(telebot.types.InlineKeyboardButton(text='Запрос к функционалу', callback_data='menu'))
+#         choise.add(telebot.types.InlineKeyboardButton(text='Светская беседа', callback_data='talk'))   
+#         choise.add(telebot.types.InlineKeyboardButton(text='Не запоминать это', callback_data='cancel')) 
+#         bot.send_message(message.chat.id, text="Что бы это значило?", reply_markup=choise)
+
+#     @bot.callback_query_handler(func=lambda call: True) 
+#     def query_handler(call):
+#         global menu_choise
+#         global dialog
+#         global replic
+#         message = call.message
+#         bot.answer_callback_query(callback_query_id=call.id, text='Я запомню это')
+#         answer = ''
+#         bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id)
+#         if call.data == 'hello':
+#             answer = ('hello')
+# ## TODO: реализовать добавление в БД
+
+#         elif call.data == 'bye':
+#             answer = ('hello')
+# ## TODO: реализовать добавление в БД
+
+#         elif call.data == 'menu':
+#             answer = ('menu')
+# ## TODO: реализовать добавление в БД
+#             return gui_menu_from_text
+        
+#         elif call.data == 'cancel':
+#             bot.send_message(message.chat.id, text="Ок, я это забуду")
+
+#         elif call.data == 'talk':
+#             bot.send_message(message.chat.id, text="А можно подробнее?")
+#             return talk_menu
+            
+#         def talk_menu(message):
+#             choise = telebot.types.InlineKeyboardMarkup()
+#             choise.add(telebot.types.InlineKeyboardButton(text='Приветствие', callback_data='hello')) 
+#             choise.add(telebot.types.InlineKeyboardButton(text='Прощание', callback_data='bye')) 
+#             choise.add(telebot.types.InlineKeyboardButton(text='Запрос к функционалу', callback_data='menu'))
+#             choise.add(telebot.types.InlineKeyboardButton(text='Светская беседа', callback_data='talk'))   
+#             choise.add(telebot.types.InlineKeyboardButton(text='Не запоминать это', callback_data='cancel')) 
+#             bot.send_message(message.chat.id, text="Что бы это значило?", reply_markup=choise)
+            
+
+@bot.message_handler(commands=['menu'])
 def gui_menu(message):
     choise = telebot.types.InlineKeyboardMarkup()
     choise.add(telebot.types.InlineKeyboardButton(text='Загрузить тестовые вакансии', callback_data='/demo'))     
@@ -147,21 +201,12 @@ def query_handler(call):
         bot.send_message(message.chat.id, menu.working(call.from_user.id, '/find'))
     elif call.data == '/help':
         bot.send_message(message.chat.id, menu.working(call.from_user.id, '/help'))
-    # bot.send_message(call.message.chat.id, answer) 
-    # menu_choise = answer
-    # dialog = 5
-
-#@bot.message_handler(func= lambda message:True, content_types=['text', 'sticker'])
-
     
 @bot.message_handler(regexp='спасибо')
 def thank_user(message):
     bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIHQ2QErs4HgWCIDatcozgEDaavRlH4AAI2BwACRvusBAqX86rdUV82LgQ')
     bot.send_message(message.chat.id, "Вежливость по отношению к боту это так мило! 🥰 _Обращайтесь_)", parse_mode='MARKDOWN')
     log(user, message.text, "ответ на благодарность")
-
-#@bot.message_handler(func= lambda message:True, content_types=['text', 'sticker'])
-
 
 @bot.message_handler(content_types=['text'])
 def data_input(message):
@@ -175,10 +220,9 @@ def data_input(message):
             if languageModule.translator((message.text).lower()) != '/stop':
                 for skill in ((message.text).lower()).split(';'):
                     func.base_of_skills.append(skill.strip())
-                # func.base_of_skills.append(((message.text).lower()).split(';'))
-                if (message.text).lower() == 'гениальность':
-                    bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIDfGP8x7p_xx1of1dE_Tft16jDoBI8AAJGIwACZ1aZSQfInwNd_rM3LgQ')
-                    bot.send_message(message.chat.id, 'Простите. Продолжайте.')
+                # if (message.text).lower() == 'гениальность':
+                #     bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIDfGP8x7p_xx1of1dE_Tft16jDoBI8AAJGIwACZ1aZSQfInwNd_rM3LgQ')
+                #     bot.send_message(message.chat.id, 'Простите. Продолжайте.')
                 log(user, message.text, "добавляем в базу навыков")
             else:
                 menu.working(message.from_user.id, '/stop')
@@ -207,7 +251,6 @@ def data_input(message):
                 for skill in ((message.text).lower()).split(';'):
                     if len(skill.strip()) > 1:
                         need_skill.append(skill.strip())
-                # need_skill.append((message.text).lower())
                 dialog = 3
                 log(user, message.text, "добавляем в требования к вакансии")
             else:
@@ -286,7 +329,6 @@ def understand (message):
     text = message.text
     print(text)
     
-    
     output = '/menu'
     translate = ''
 
@@ -303,8 +345,7 @@ def understand (message):
             print(user, message.text, translate)
             log(user, message.text, translate)
             output = str(menu.working(message.from_user.id, translate)) # команда уходит в меню
-        
-        
+            
         if output != translate: # если команда что-то вернула, кроме самой себя
             print(output)
             bot.send_message(message.chat.id, output, parse_mode='MARKDOWN')       # (для команд, которые есть в меню)
@@ -359,7 +400,6 @@ def understand (message):
                 log(user, message.text, str(f"->{translate} : запрашиваем название вакансии"))
                 out_say(message, -2)
 
-
             elif output=='/hello': 
                 if (load_status==False or(load_status==True and len(func.base_of_skills)<4)):
                     bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIHB2QEjQIBEJD1pZvNYu8YY6WWN0ZHAAI-BwACRvusBK9cOl7BGYj2LgQ')
@@ -390,6 +430,9 @@ def understand (message):
 
 
 def talking(message):
+    global dialog
+    global replic
+    global users_text
     try:
         quest = talkingModule.vocablary_text(str(message.text))
         print(quest)
@@ -408,7 +451,12 @@ def talking(message):
         print(res)
         bot.send_message(message.chat.id, res)
     except:
-        error(message, 'Сторонее API не справилось с задачей', 'Так хотелось ответить Вам что-нибудь остроумное, но что-то сломалось')
+        # error(message, 'Сторонее API не справилось с задачей', 'Так хотелось ответить Вам что-нибудь остроумное, но что-то пошло не так')
+        users_text = message.text
+        dialog = 9
+        replic = 'Что значит эта фраза?\n'
+        log(user, message.text, str("Формируем распознание фразы"))
+        out_say(message, 8)
 
 
 
