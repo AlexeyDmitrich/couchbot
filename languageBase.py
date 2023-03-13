@@ -24,8 +24,11 @@ def add_phrase (table, phrase, rate=1):
     try:
         with connect:
             rate = connect.execute(f"SELECT * FROM {table} WHERE phrase == '{phrase}'")
+            for raw in rate:
+                rate = raw[2]
+                rate += 1
             print(rate)
-            connect.executemany(f'UPDATE {table} SET rate={rate+1} WHERE phrese == {phrase}') 
+            connect.executemany(f"UPDATE {table} SET rate={rate} WHERE phrase == '{phrase}'") 
     except:
         sql = f'INSERT INTO {table} (phrase, rate) values(?, ?)'
         data = (phrase, rate)
