@@ -5,7 +5,7 @@ import json
 import functions as func
 import requests
 import languageModule
-from languageModule import translator as tran
+from languageModule import translator as translator # ?
 import talkingModule
 import time
 from logger import dump as log
@@ -84,6 +84,8 @@ def cancel (message):
     log(user, message.text, "выполняем func.load(user)")
     return func.load(user)
 
+                    ###
+
 # if dialog == 8:
 #     @bot.message_handler(content_types=['text'])
 #     def gui_menu(message):
@@ -96,7 +98,7 @@ def cancel (message):
 #         bot.send_message(message.chat.id, text="Что бы это значило?", reply_markup=choise)
 
 #     @bot.callback_query_handler(func=lambda call: True) 
-#     def query_handler(call):
+#     def query_handler_talk(call):
 #         global menu_choise
 #         global dialog
 #         global replic
@@ -126,14 +128,16 @@ def cancel (message):
             
 #         def talk_menu(message):
 #             choise = telebot.types.InlineKeyboardMarkup()
-#             choise.add(telebot.types.InlineKeyboardButton(text='Приветствие', callback_data='hello')) 
-#             choise.add(telebot.types.InlineKeyboardButton(text='Прощание', callback_data='bye')) 
-#             choise.add(telebot.types.InlineKeyboardButton(text='Запрос к функционалу', callback_data='menu'))
-#             choise.add(telebot.types.InlineKeyboardButton(text='Светская беседа', callback_data='talk'))   
-#             choise.add(telebot.types.InlineKeyboardButton(text='Не запоминать это', callback_data='cancel')) 
+#             choise.add(telebot.types.InlineKeyboardButton(text='Это вопрос', callback_data='qu')) 
+#             choise.add(telebot.types.InlineKeyboardButton(text='Это ответ на вопрос', callback_data='an')) 
+#             choise.add(telebot.types.InlineKeyboardButton(text='Это предложение', callback_data='todo'))
+#             choise.add(telebot.types.InlineKeyboardButton(text='Это юмор', callback_data='talk'))   
+#             # choise.add(telebot.types.InlineKeyboardButton(text='', callback_data='cancel')) 
 #             bot.send_message(message.chat.id, text="Что бы это значило?", reply_markup=choise)
-            
 
+
+                    ###
+            
 @bot.message_handler(commands=['menu'])
 def gui_menu(message):
     choise = telebot.types.InlineKeyboardMarkup()
