@@ -9,7 +9,7 @@ connect = sl.Connection('language.db')
 #             phrase TEXT,
 #             rate INTEGER
 #         );
-#     """)
+#      """)
 #     connect.execute("""
 #         CREATE TABLE BYE (
 #             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -23,12 +23,12 @@ def add_phrase (table, phrase, rate=1):
     phrase = str(phrase).strip().lower()
     try:
         with connect:
-            rate = connect.execute(f"SELECT * FROM {table} WHERE phrase == '{phrase}'")
+            rate = connect.execute(f"SELECT * FROM {table} WHERE phrase LIKE '{phrase}'")
             for raw in rate:
                 rate = raw[2]
                 rate += 1
             print(rate)
-            connect.executemany(f"UPDATE {table} SET rate={rate} WHERE phrase == '{phrase}'") 
+            connect.execute(f"UPDATE {table} SET rate={rate} WHERE phrase LIKE '{phrase}'") 
     except:
         sql = f'INSERT INTO {table} (phrase, rate) values(?, ?)'
         data = (phrase, rate)
