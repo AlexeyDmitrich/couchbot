@@ -1,7 +1,7 @@
 import json as js
 import sqlite3 as sl
 
-# stdin = input('ожидаю ввода: \n')
+stdin = input('ожидаю ввода: \n')
 
 # arr = []
 
@@ -9,7 +9,7 @@ import sqlite3 as sl
 
 # print(f'stdin \t:\t {stdin}\nstdout \t:\t {arr}')
 
-# print(len(stdin))
+print(stdin.removeprefix("/"))
 
 # try:
 #     with open (f'vacancy.json', 'r', encoding='UTF-8') as vac:

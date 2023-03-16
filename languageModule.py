@@ -13,7 +13,7 @@ def translator (users_text):
         #   '/start run go старт пуск поехали начали начинай начнем начнём'
     stop = ['/stop', 'стоп', 'останавливать', 'хватить', 'прекращать', 'уходить', 'выход', 'выходить', 'заканчивать', 'достаточно', 'сохранять', 'все', 'exit', 'quit']
         #  '/stop стоп остановить хватит прекрати уйти выход выйти закончить достаточно сохранить всё все exit quit'
-    help = ['/help','manual','помощь','помогать','мануал','справка','уметь','как'] 
+    help = ['/help','manual','помощь','помогать','мануал','справка','уметь','как', 'мочь'] 
         #  '/help manual помощь помочь помогите мануал справка мочь уметь'
     show = ['show','view','open','показывать','просматривать','посмотреть','глянуть','взглядывать','открывать','сформировывать','вывести'] 
         #  'show view open покажи показать просмотреть посмотреть взглянуть открыть открой сформируй выведи вывести'
@@ -54,7 +54,6 @@ def translator (users_text):
                 return '/bye'
             if word in help:
                 potential_command+=("/help")
-                return '/help'
             if word in find:
                 potential_command+=("/find")
                 return "/find"
@@ -88,16 +87,20 @@ def translator (users_text):
                 potential_command+=("skill")
 
 
+        # обрабатываем различие "что ты можешь?" - "можешь (сделать следующее)?"
+        if ("help" in potential_command) and "/" not in (potential_command.removeprefix("/")):
+            potential_command = "/help"
+        elif ("help" in potential_command) and "/" in (potential_command.removeprefix("/")):
+            potential_command = potential_command.removeprefix("/help")
 
-        
 #        print(potential_command)
         return potential_command
         
     
-    potential_comand = construct_phrase(users_text)                     
-    return potential_comand
+    potential_command = construct_phrase(users_text)                     
+    return potential_command
 
-###
+### прошлая версия
     for word in str(users_text).lower().split():
         if word in start:
             return '/start'

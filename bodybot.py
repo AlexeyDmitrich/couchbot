@@ -84,59 +84,7 @@ def cancel (message):
     log(user, message.text, "выполняем func.load(user)")
     return func.load(user)
 
-                    ###
 
-# if dialog == 8:
-#     @bot.message_handler(content_types=['text'])
-#     def gui_menu(message):
-#         choise = telebot.types.InlineKeyboardMarkup()
-#         choise.add(telebot.types.InlineKeyboardButton(text='Приветствие', callback_data='hello')) 
-#         choise.add(telebot.types.InlineKeyboardButton(text='Прощание', callback_data='bye')) 
-#         choise.add(telebot.types.InlineKeyboardButton(text='Запрос к функционалу', callback_data='menu'))
-#         choise.add(telebot.types.InlineKeyboardButton(text='Светская беседа', callback_data='talk'))   
-#         choise.add(telebot.types.InlineKeyboardButton(text='Не запоминать это', callback_data='cancel')) 
-#         bot.send_message(message.chat.id, text="Что бы это значило?", reply_markup=choise)
-
-#     @bot.callback_query_handler(func=lambda call: True) 
-#     def query_handler_talk(call):
-#         global menu_choise
-#         global dialog
-#         global replic
-#         message = call.message
-#         bot.answer_callback_query(callback_query_id=call.id, text='Я запомню это')
-#         answer = ''
-#         bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id)
-#         if call.data == 'hello':
-#             answer = ('hello')
-# ## TODO: реализовать добавление в БД
-
-#         elif call.data == 'bye':
-#             answer = ('hello')
-# ## TODO: реализовать добавление в БД
-
-#         elif call.data == 'menu':
-#             answer = ('menu')
-# ## TODO: реализовать добавление в БД
-#             return gui_menu_from_text
-        
-#         elif call.data == 'cancel':
-#             bot.send_message(message.chat.id, text="Ок, я это забуду")
-
-#         elif call.data == 'talk':
-#             bot.send_message(message.chat.id, text="А можно подробнее?")
-#             return talk_menu
-            
-#         def talk_menu(message):
-#             choise = telebot.types.InlineKeyboardMarkup()
-#             choise.add(telebot.types.InlineKeyboardButton(text='Это вопрос', callback_data='qu')) 
-#             choise.add(telebot.types.InlineKeyboardButton(text='Это ответ на вопрос', callback_data='an')) 
-#             choise.add(telebot.types.InlineKeyboardButton(text='Это предложение', callback_data='todo'))
-#             choise.add(telebot.types.InlineKeyboardButton(text='Это юмор', callback_data='talk'))   
-#             # choise.add(telebot.types.InlineKeyboardButton(text='', callback_data='cancel')) 
-#             bot.send_message(message.chat.id, text="Что бы это значило?", reply_markup=choise)
-
-
-                    ###
             
 @bot.message_handler(commands=['menu'])
 def gui_menu(message):
@@ -218,15 +166,11 @@ def data_input(message):
     global replic
     global vacancy
     global need_skill
-
     try:
         if dialog == 1:
             if languageModule.translator((message.text).lower()) != '/stop':
                 for skill in ((message.text).lower()).split(';'):
                     func.base_of_skills.append(skill.strip())
-                # if (message.text).lower() == 'гениальность':
-                #     bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIDfGP8x7p_xx1of1dE_Tft16jDoBI8AAJGIwACZ1aZSQfInwNd_rM3LgQ')
-                #     bot.send_message(message.chat.id, 'Простите. Продолжайте.')
                 log(user, message.text, "добавляем в базу навыков")
             else:
                 menu.working(message.from_user.id, '/stop')
@@ -336,14 +280,11 @@ def understand (message):
     output = '/menu'
     translate = ''
 
-    try:                
-        
+    try:                  
         if dialog == 5:
             text = menu_choise
-            dialog = 0
-        
+            dialog = 0       
         if dialog == 0:
-
             translate = languageModule.translator(text)     # переводим речь в команду для бота
             # если подходящей команды не нашлось - возвращаем фразу в неизменном виде  
             print(user, message.text, translate)
@@ -370,6 +311,7 @@ def understand (message):
                 log(user, message.text, str(f"->{translate} : запрашиваем название вакансии"))
                 out_say(message, 2)
 
+            # для загрузки тестовых вакансий
             elif output == '/demo':
                 with open (f'vacancy.json', 'r', encoding='UTF-8') as vac:
                     func.base_of_vacancis = json.load(vac)
@@ -378,12 +320,14 @@ def understand (message):
                 log(user, message.text, str(f"->{translate} : загружаем демо вакансии"))
                 out_say(message, 0)
             
+            # чек по вакансии
             elif output == '/checkvac':
                 dialog = 9
                 replic = 'Введите вакансию: \n'
                 log(user, message.text, str(f"->{translate} : запрашиваем название вакансии"))
                 out_say(message, 4)
-                
+            
+            # чек по навыку
             elif output == '/checkskill':
                 dialog = 9
                 replic = 'Введите навык: \n'
@@ -404,6 +348,7 @@ def understand (message):
                 log(user, message.text, str(f"->{translate} : запрашиваем название вакансии"))
                 out_say(message, -2)
 
+            # для инициализации пользователя или приветствия
             elif output=='/hello': 
                 if (load_status==False or(load_status==True and len(func.base_of_skills)<4)):
                     bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIHB2QEjQIBEJD1pZvNYu8YY6WWN0ZHAAI-BwACRvusBK9cOl7BGYj2LgQ')
@@ -413,7 +358,7 @@ def understand (message):
                     bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIHB2QEjQIBEJD1pZvNYu8YY6WWN0ZHAAI-BwACRvusBK9cOl7BGYj2LgQ')
                     bot.send_message(message.chat.id, 'Здорово, что мы снова встретились!')
                     log(user, message.text, "функция обычного приветствия")
-
+            # сохранение баз пользователя и прощание
             elif output=='/bye':
                 func.save(message.from_user.id)
                 bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIHRmQEr-xvBpCV-JwHUCsDWaIaPrNeAAIuBwACRvusBPxoaF47DCKVLgQ')
@@ -421,8 +366,8 @@ def understand (message):
                 log(user, message.text, "прощание")
               
             # AI для поддержания диалога
+            # Пока будем использовать запросы к Вики с помощью API deeppavlov.ai
             else:
-    #            bot.send_message(message.chat.id, output)
                 try:
                     log(user, message.text, str(f"->{translate} : пробуем получить ответ у Павлова"))
                     talking(message)
@@ -455,12 +400,14 @@ def talking(message):
         print(res)
         bot.send_message(message.chat.id, res)
     except:
-        # error(message, 'Сторонее API не справилось с задачей', 'Так хотелось ответить Вам что-нибудь остроумное, но что-то пошло не так')
-        users_text = message.text
-        dialog = 9
-        replic = 'Что значит эта фраза?\n'
-        log(user, message.text, str("Формируем распознание фразы"))
-        out_say(message, 8)
+        error(message, 'Сторонее API не справилось с задачей', 'Так хотелось ответить Вам что-нибудь остроумное, но что-то пошло не так')
+
+# Этот блок нужно будет активировать после наладки languageBase:
+        # users_text = message.text
+        # dialog = 9
+        # replic = 'Что значит эта фраза?\n'
+        # log(user, message.text, str("Формируем распознание фразы"))
+        # out_say(message, 8)
 
 
 
@@ -481,6 +428,7 @@ def sticker_input(message):
         print(message.sticker.file_id)
         bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAIHNmQEpr_DbhX4NMDVVmtGL5rPbRrsAAJJBwACRvusBCGgUFw9zcWhLgQ') #'CAACAgIAAxkBAAIDj2P80Kf2YKS55GsH45nircucbFqjAAJBEQACA04JSn3DX5Qm6dIJLgQ')
         bot.send_message(message.chat.id, 'Что бы этот стикер значил? \n(пока это риторический вопрос)')
+        #TODO:"После подключения языковой базы создать базу стикеров"
     except:
         error(message, "Исключение при обработке стикера")
         

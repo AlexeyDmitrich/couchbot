@@ -1,3 +1,4 @@
+# Модуль в разработке
 import sqlite3 as sl
 
 connect = sl.Connection('language.db')
