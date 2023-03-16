@@ -187,7 +187,7 @@ def data_input(message):
                 log(user, message.text, "добавляем в базу вакансий")
                 out_say(message, 3)            
             else: 
-                bot.send_message(message.chat.id, 'записал')
+                bot.send_message(message.chat.id, 'я запомню')
                 dialog = 0
                 func.add_vacancy(vacancy, need_skill)
                 log(user, message.text, "сохраняем")

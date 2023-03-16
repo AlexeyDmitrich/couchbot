@@ -249,7 +249,7 @@ def find_me_job ():
     lead1 = base_of_vacancis[0]
     lead2 = base_of_vacancis[0]
     lead3 = base_of_vacancis[0]
-    top = 2
+    top = 3
     while top !=0:
         for vac in base_of_vacancis:
             if vac[2] >= lead1[2]:
