@@ -171,12 +171,12 @@ def data_input(message):
             if languageModule.translator((message.text).lower()) != '/stop':
                 for skill in ((message.text).lower()).split(';'):
                     func.base_of_skills.append(skill.strip())
-                log(user, message.text, "добавляем в базу навыков")
+                log(user, str(message.text).replace(';',','), "добавляем в базу навыков")
             else:
                 menu.working(message.from_user.id, '/stop')
                 bot.send_message(message.chat.id, 'я постараюсь запомнить эти навыки')
                 dialog = 0 
-                log(user, message.text, "сохраняем")
+                log(user, str(message.text).replace(';',','), "сохраняем")
 
         elif dialog == 2: 
             if languageModule.translator((message.text).lower()) != '/stop':
@@ -200,7 +200,7 @@ def data_input(message):
                     if len(skill.strip()) > 1:
                         need_skill.append(skill.strip())
                 dialog = 3
-                log(user, message.text, "добавляем в требования к вакансии")
+                log(user, str(message.text).replace(';', ','), "добавляем в требования к вакансии")
             else:
                 dialog = 9
                 replic = 'введите название следующей вакансии или скажите стоп, чтобы сохранить'
