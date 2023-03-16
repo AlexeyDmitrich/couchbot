@@ -112,15 +112,6 @@ def print_help ():
     ''')
     return man_text
 
-# def add_skill ():
-#     global base_of_skills
-#     skill = ' '
-#     while skill != '':
-#         skill = input('Введите навык и нажмите enter, \nесли новых навыков больше нет, просто нажмите enter \n')
-#         if skill != '':
-#             base_of_skills.append(skill.lower())
-#             print ('Навык добавлен \n')
-
 def add_vacancy (name, skills):
     global base_of_vacancis
     name = name  # input('Для начала введите название вакансии: \n')
@@ -213,22 +204,24 @@ def check_vac (vacancy):
 
 # чек навыка
 def check_skill (skill):
+    global base_of_vacancis
     check = '''
     '''
     counter = 0
-    connect = sl.Connection('vacancy_skill.db')
-    with connect:
-        data = connect.execute("SELECT * FROM VACANCY WHERE need_skills == 'c#'")
-        for row in data:
-            counter +=1
-            check += "*\t"
-            check += (row[1])
-            check += "\n"
-        if counter > 0:
-            check += f"Навык будет полезен в {counter} специальностях"
+    for vac in base_of_vacancis:
+        if skill in vac[1]:
+            counter += 1
+    if counter > 0:
+        if ((counter+10)%10==1) and (counter!=11):
+            check += f"Навык будет полезен в {counter} специальности"
         else:
-            check += "Для выбранных специальностей этот навык, увы, бесполезен. Может работодатели его называют как-то иначе?"    
+            check += f"Навык будет полезен в {counter} специальностях"
+        percent = round((counter/len(base_of_vacancis))*100)
+        check += f"В специалистах с этим навыком заинтересованы {percent}% работодателей"
+    else:
+        check += "Для выбранных специальностей этот навык, увы, бесполезен. Может работодатели его называют как-то иначе?"    
     return check
+
 
 # подбор подходящих вакансий
 def find_me_job ():
