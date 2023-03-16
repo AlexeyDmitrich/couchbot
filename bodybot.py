@@ -215,7 +215,7 @@ def data_input(message):
 
         elif dialog == 5:
             check = func.check_skill(message.text)
-            bot.send_message(message.chat.id, check)
+            bot.send_message(message.chat.id, check, parse_mode='MARKDOWN')
             dialog = 0
             log(user, message.text, "формируем чек по навыку")
 

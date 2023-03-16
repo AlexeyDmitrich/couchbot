@@ -210,17 +210,22 @@ def check_skill (skill):
     counter = 0
     vacs = '' 
     for vac in base_of_vacancis:
-        if skill in vac[1]:
+        if str(skill).lower().rstrip() in vac[1]:
             counter += 1
-            vacs += f'\n \t☑️ {vac}'
+            vac_skills_to_str = ''
+            for value in vac[1]:
+                vac_skills_to_str += f"{value}, "
+            vac_skills_to_str = vac_skills_to_str.removesuffix(', ')
+            vac_to_str = f'**{vac[0]}** ({vac_skills_to_str})\n'
+            vacs += f'\n \t☑️ {vac_to_str}'
     if counter > 0:
         check += f'Навык будет полезен для: \n{vacs}'
         if ((counter+10)%10==1) and (counter!=11):
-            check += f"\nНавык пригодится в {counter} специальности"
+            check += f"\n Навык пригодится в {counter} специальности."
         else:
-            check += f"\nНавык пригодится в {counter} специальностях"
+            check += f"\n Навык пригодится в {counter} специальностях."
         percent = round((counter/len(base_of_vacancis))*100)
-        check += f"\nВ специалистах с этим навыком заинтересованы {percent}% работодателей"
+        check += f"\nВ специалистах с этим навыком заинтересованы {percent}% работодателей."
     else:
         check += "Для выбранных специальностей этот навык, увы, бесполезен. Может работодатели его называют как-то иначе?"    
     return check
